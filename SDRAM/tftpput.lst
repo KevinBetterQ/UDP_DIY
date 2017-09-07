@@ -1,0 +1,111 @@
+L 1 "Source\tftp\tftpput.c"
+N
+N#include "tftpput.h"
+L 1 ".\INC\tftp\tftpput.h" 1
+N#ifndef __TFTPPUT_H
+N#define __TFTPPUT_H
+N
+Nint tftp_put_begin(void);
+Nint tftp_put(unsigned char *data, int len);
+Nint tftp_put_end(void);
+N
+N#endif /* __TFTPPUT_H */
+L 3 "Source\tftp\tftpput.c" 2
+N#include "utils.h"
+L 1 ".\INC\utils.h" 1
+N#ifndef	__UTILS_H
+N#define	__UTILS_H
+N
+Nvoid memcpy(void *s1, const void *s2, int n);
+Nvoid memset(void *s, const char ch, int n);
+Nunsigned short ntohs(unsigned short s);
+Nunsigned long ntohl(unsigned long l);
+Nunsigned short htons(unsigned short s);
+Nunsigned long htonl(unsigned long l);
+N//unsigned long strtoul(char *s);
+Nvoid ultostr(char *s, unsigned long data);
+Nunsigned long strtobcd(char *s);
+Nunsigned long strtodec(char *str, int cnt);
+Nint strlen(const char *s);
+Nint strncmp(const char *s1, const char *s2, int maxlen);
+N
+Nint getyorn(void);
+Nvoid printf(char *f, ...);
+Nvoid sprintf(char *mem, char *fmt, ...);
+N
+Nint GetParameter(char *str, int cnt);
+N
+N#endif
+L 4 "Source\tftp\tftpput.c" 2
+N
+N
+N
+Nextern char TftpLoadEnd;
+Nextern char TftpPutMark;
+Nextern char TftpPutBegin;
+Nextern unsigned long download_len;
+Nextern unsigned long download_addr;
+N
+Nstatic unsigned char *buf;
+Nstatic int data_len;
+N
+Nint tftp_put_begin(void)
+N{	
+N	buf = (unsigned char *)download_addr;
+N	data_len = 0;
+N	TftpPutBegin = 1;
+N	
+N	return 0;
+N}
+N
+Nint tftp_put(unsigned char *data, int len)
+N{
+N	static int count = 0;		
+N
+N	count += len;
+N	if (count > 32 * 1024) {
+N		TftpPutMark = 1;
+N		count = 0;
+N	}
+N	
+N	memcpy(buf + data_len, data, len);
+N			
+N	data_len += len;			
+N	
+N	return 0;
+N}
+N
+Nint update_bios(unsigned char *bios, int size)
+N{
+N
+N	return 0;
+N}
+N
+Nint update_system_table(unsigned char *system_table, int size)
+N{
+N	return 0;
+N}
+N
+Nint update_partition_table(unsigned char *partition_table, int size)
+N{
+N	return 0;
+N}
+N
+Nint update_partition(int partition_num, unsigned char *partition_data, int size)
+N{
+N	return 0;
+N}
+N
+Nint update_firmware(unsigned char *firmware, int size)
+N{
+N	return 0;
+N}
+N
+Nint tftp_put_end(void)
+N{	
+N	TftpLoadEnd = 1;
+N	download_len = data_len;
+N	return 0;
+N}
+N
+N

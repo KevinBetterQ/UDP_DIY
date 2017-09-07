@@ -1,0 +1,1774 @@
+L 1 "Source\tftp\dm9000dbg.c"
+N#include "2410lib.h"
+L 1 "..\Common\Inc\2410lib.h" 1
+N/*********************************************************************************************
+N* File name	: 2410lib.h
+N* Author	: embest
+N* Descript	: S3C2410 Define Address Register 
+N* History
+N*********************************************************************************************/
+N
+N/*------------------------------------------------------------------------------------------*/
+N/*	 								include files						 				    */
+N/*------------------------------------------------------------------------------------------*/
+N#include "def.h"
+L 1 "..\Common\Inc\def.h" 1
+N/*********************************************************************************************
+N* File name	: 2410lib.h
+N* Author	: embest
+N* Descript	: S3C2410 Example 
+N* History
+N*********************************************************************************************/
+N#ifndef __DEF_H__
+N#define __DEF_H__
+N
+N#define UINT32T unsigned int
+N#define INT32T	int
+N#define UINT16T unsigned short
+N#define INT16T	short int
+N#define UINT8T  unsigned char
+N#define	INT8T  char
+N
+N#define TRUE 	1
+N#define FALSE 	0
+N#define OK		1
+N#define FAIL	0
+N#define FileEnd	1
+N#define	NotEnd	0
+N
+N#define False 0
+N#define True !False
+N
+N// Sets the result on bPort 
+N#define BIT_SET(bPort,bBitMask)        (bPort |= bBitMask)
+N#define BIT_CLR(bPort,bBitMask)        (bPort &= ~bBitMask)
+N
+N// Returns the result
+N#define GET_BIT_SET(bPort,bBitMask)    (bPort | bBitMask)
+N#define GET_BIT_CLR(bPort,bBitMask)    (bPort & ~bBitMask)
+N
+N// Returns 0 if the condition is False & a non-zero value if it is True
+N#define TEST_BIT_SET(bPort,bBitMask)   (bPort & bBitMask)
+N#define TEST_BIT_CLR(bPort,bBitMask)   ((~bPort) & bBitMask)
+N
+N#endif /*__DEF_H__*/
+N
+L 12 "..\Common\Inc\2410lib.h" 2
+N#include "memcfg.h"
+L 1 "..\Common\Inc\memcfg.h" 1
+N//************************************************ 
+N// NAME    : memcfg.inc
+N// DESC	  : Memory bank configuration file
+N// Revision: 02.28.2002 ver 0.0
+N//************************************************
+N
+N//Memory Area
+N//GCS6 16bit(16MB) SDRAM(0x0c000000-0x0cffffff)
+N//GCS7 16bit(16MB) SDRAM(0x0d000000-0x0dffffff)
+N//          or
+N//GCS6 32bit(32MB) SDRAM(0x0c000000-0x0dffffff)
+N
+N#ifndef __MEMCFG_H
+N#define __MEMCFG_H
+N 
+N// BUSWIDTH : 16,32
+N#define BUSWIDTH    (32)
+N
+N//64MB
+N// 0x30000000 ~ 0x30ffffff : Download Area (16MB) Cacheable
+N// 0x31000000 ~ 0x33feffff : Non-Cacheable Area
+N// 0x33ff0000 ~ 0x33ff47ff : Heap & RW Area
+N// 0x33ff4800 ~ 0x33ff7fff : FIQ ~ User Stack Area
+N// 0x33ff8000 ~ 0x33fffeff : Not Used Area
+N// 0x33ffff00 ~ 0x33ffffff : Exception & ISR Vector Table
+N
+N#define _RAM_STARTADDRESS       0x30000000
+N#define _NONCACHE_STARTADDRESS	0x31000000
+N#define _ISR_STARTADDRESS       0x33ffff00     
+N#define _MMUTT_STARTADDRESS     0x33ff8000
+N#define _STACK_BASEADDRESS      0x33ff8000
+N#define HEAPEND                 0x33ff0000
+N
+N//BWSCON
+N#define DW8			(0x0)
+N#define DW16			(0x1)
+N#define DW32			(0x2)
+N#define WAIT			(0x1<<2)
+N#define UBLB			(0x1<<3)
+N
+N//BUSWIDTH=32
+N
+N#define B1_BWSCON	 (DW32)
+N#define B2_BWSCON	 (DW16)
+N#define B3_BWSCON	 (DW16)
+N#define B4_BWSCON	 (DW16)
+N#define B5_BWSCON	 (DW16)
+N#define B6_BWSCON	 (DW32)
+N#define B7_BWSCON	 (DW32)
+N    
+N
+N//BANK0CON 
+N#define B0_Tacs			0x0	//0clk
+N#define B0_Tcos			0x0	//0clk
+N#define B0_Tacc			0x7	//14clk
+N#define B0_Tcoh			0x0	//0clk
+N#define B0_Tah			0x0	//0clk
+N#define B0_Tacp			0x0	
+N#define B0_PMC			0x0	//normal
+N
+N//BANK1CON
+N#define B1_Tacs			0x0	//0clk
+N#define B1_Tcos			0x0	//0clk
+N#define B1_Tacc			0x7	//14clk
+N#define B1_Tcoh			0x0	//0clk
+N#define B1_Tah			0x0	//0clk
+N#define B1_Tacp			0x0	
+N#define B1_PMC			0x0	//normal
+N
+N//Bank 2 parameter
+N#define B2_Tacs			0x0	//0clk
+N#define B2_Tcos			0x0	//0clk
+N#define B2_Tacc			0x7	//14clk
+N#define B2_Tcoh			0x0	//0clk
+N#define B2_Tah			0x0	//0clk
+N#define B2_Tacp			0x0	
+N#define B2_PMC			0x0	//normal
+N
+N//Bank 3 parameter
+N#define B3_Tacs			0x0	//0clk
+N#define B3_Tcos			0x0	//0clk
+N#define B3_Tacc			0x7	//14clk
+N#define B3_Tcoh			0x0	//0clk
+N#define B3_Tah			0x0	//0clk
+N#define B3_Tacp			0x0	
+N#define B3_PMC			0x0	//normal
+N
+N//Bank 4 parameter
+N#define B4_Tacs			0x0	//0clk
+N#define B4_Tcos			0x0	//0clk
+N#define B4_Tacc			0x7	//14clk
+N#define B4_Tcoh			0x0	//0clk
+N#define B4_Tah			0x0	//0clk
+N#define B4_Tacp			0x0	
+N#define B4_PMC			0x0	//normal
+N
+N//Bank 5 parameter
+N#define B5_Tacs			0x0	//0clk
+N#define B5_Tcos			0x0	//0clk
+N#define B5_Tacc			0x7	//14clk
+N#define B5_Tcoh			0x0	//0clk
+N#define B5_Tah			0x0	//0clk
+N#define B5_Tacp			0x0	
+N#define B5_PMC			0x0	//normal
+N
+N//Bank 6 parameter
+N#define B6_MT			0x3	//SDRAM
+N//B6_Trcd			0x0	//2clk
+N#define B6_Trcd			0x1	//3clk
+N#define B6_SCAN			0x1	//9bit
+N
+N//Bank 7 parameter
+N#define B7_MT			0x3	//SDRAM
+N//B7_Trcd			0x0	//2clk
+N#define B7_Trcd			0x1	//3clk
+N#define B7_SCAN			0x1	//9bit
+N
+N//REFRESH parameter
+N#define REFEN	  	    0x1	//Refresh enable
+N#define TREFMD	  	    0x0	//CBR(CAS before RAS)/Auto refresh
+N#define Trp	  	        0x0	//2clk
+N#define Trc	  	        0x3	//7clk
+N		
+N#define Tchr			0x2	//3clk
+N#define REFCNT			1113	//period=15.6us, HCLK=60Mhz, (2048+1-15.6*60)
+N
+N
+N#endif
+N
+L 13 "..\Common\Inc\2410lib.h" 2
+N#include "option.h"
+L 1 "..\Common\Inc\option.h" 1
+N/*********************************************************************************************
+N* File name	: option.h
+N* Author	: embest
+N* Descript	: Define S3C2410 CPU Option contents 
+N* History
+N*********************************************************************************************/
+N
+N#ifndef __OPTION_H__
+N#define __OPTION_H__
+N
+N#define FCLK 202800000
+N#define HCLK (202800000/2)
+N#define PCLK (202800000/4)
+N#define UCLK PCLK
+N
+N#ifdef CLK111_50M
+S#define FCLK 50000000
+S#define HCLK 50000000
+S#define PCLK 50000000
+S#define UCLK 50000000
+N#endif
+N
+N#ifdef CLK124_135M
+S#define FCLK 135428571
+S#define HCLK (135428571/2)
+S#define PCLK (135428571/4)
+N#endif
+N
+N#ifdef CLK124_200M
+S#define FCLK 200000000
+S#define HCLK (200000000/2)
+S#define PCLK (200000000/4)
+N#endif
+N
+N#ifdef CLK124_220M
+S#define FCLK 220000000
+S#define HCLK (220000000/2)
+S#define PCLK (220000000/4)
+N#endif
+N
+N#ifdef CLK124_226M
+S#define FCLK 226000000
+S#define HCLK (226000000/2)
+S#define PCLK (226000000/4)
+N#endif
+N
+N#ifdef CLK124_237M
+S#define FCLK 237000000
+S#define HCLK (237000000/2)
+S#define PCLK (237000000/4)
+S#define UCLK 50000000
+N#endif
+N
+N#define FCLK_SPEED 1
+N#if FCLK_SPEED==0   					//  FCLK=203Mhz, Fin=12Mhz for AUDIO     
+X#if 1==0   					
+S	#define M_MDIV          0xc3
+S	#define M_PDIV          0x4
+S	#define M_SDIV          0x1
+N#elif FCLK_SPEED==1 					// Fin = 12M FCLK = 202.8Mhz M_MDIV = 0xa1 M_PDIV = 0x3 M_SDIV = 0x1
+X#elif 1==1 					
+N	#define M_MDIV          0xa1
+N	#define M_PDIV          0x3
+N	#define M_SDIV          0x1
+N#endif
+N
+N#define PWRST             GPIO0
+N#define OFFRST            GPIO1
+N#define WDRST             GPIO2
+N#define POWEROFFLED1	  (0x2<<4)
+N#define POWEROFFLED2  	  (0x4<<4)
+N#define POWEROFFLED3  	  (0x8<<4)
+N
+N//USB Device Options
+N#define USBDMA		TRUE
+N#define USBDMA_DEMAND 	FALSE			// the downloadFileSize should be (64*n)
+N#define BULK_PKT_SIZE	32
+N
+N#endif    //__OPTION_H__	 
+N
+L 14 "..\Common\Inc\2410lib.h" 2
+N#include "register.h"
+L 1 "..\Common\Inc\register.h" 1
+N/*********************************************************************************************
+N* File name	: register.h
+N* Author	: embest
+N* Descript	: S3C2410 Define Address Register 
+N* History
+N*********************************************************************************************/
+N
+N#ifndef _S3C2410_REG_H
+N#define _S3C2410_REG_H
+N
+N#define GPIO(Nb)	(0x00000001 << Nb)
+N#define GPIO0		GPIO (0)   // GPIO  [0]	
+N#define GPIO1		GPIO (1)   // GPIO  [1]		
+N#define GPIO2		GPIO (2)   // GPIO  [2]	
+N#define GPIO3		GPIO (3)   // GPIO  [3]	
+N#define GPIO4		GPIO (4)   // GPIO  [4]		
+N#define GPIO5		GPIO (5)   // GPIO  [5]			
+N#define GPIO6		GPIO (6)   // GPIO  [6]			
+N#define GPIO7		GPIO (7)   // GPIO  [7]			
+N#define GPIO8		GPIO (8)   // GPIO  [8]			
+N#define GPIO9		GPIO (9)   // GPIO  [9]			
+N#define GPIO10		GPIO (10)  // GPIO [10]				
+N#define GPIO11		GPIO (11)  // GPIO [11]			
+N#define GPIO12		GPIO (12)  // GPIO [12]			
+N#define GPIO13		GPIO (13)  // GPIO [13]				
+N#define GPIO14		GPIO (14)  // GPIO [14]			
+N#define GPIO15		GPIO (15)  // GPIO [15]			
+N#define GPIO16		GPIO (16)  // GPIO [16]				
+N#define GPIO17		GPIO (17)  // GPIO [17]			
+N
+N
+N#define INTMSK		0x4A000008
+N#define INTPND		0x4A000010
+N#define INTSUBMSK	0x4A00001C
+N#define WTCON		0x53000000
+N#define LOCKTIME	0x4C000000
+N#define MPLLCON		0x4C000004
+N#define UPLLCON		0x4C000008
+N#define CLKDIVN		0x4C000014
+N#define BWSCON		0x48000000
+N#define REFRESH		0x48000024
+N#define BANKSIZE	0x48000028
+N#define GPFCON		0x56000050
+N#define GPFDAT		0x56000054
+N#define GPFUP		0x56000058
+N
+N#define MISCCR		0x56000080
+N#define SCK_NORMAL	(0x7<<17)
+N
+N#define GSTATUS0	0x560000AC
+N#define GSTATUS1	0x560000B0
+N#define GSTATUS2	0x560000B4
+N#define GSTATUS3	0x560000B8
+N#define GSTATUS4	0x560000BC    
+N
+N#endif
+L 15 "..\Common\Inc\2410lib.h" 2
+N#include "2410addr.h"
+L 1 "..\Common\Inc\2410addr.h" 1
+N/*********************************************************************************************
+N* File name	: 2410addr.h
+N* Author	: embest
+N* Descript	: S3C2410 Define Address Register 
+N* History
+N*			R.X.Huang, Programming modify, March 12, 2005
+N*********************************************************************************************/
+N
+N#ifndef __2410ADDR_H__
+N#define __2410ADDR_H__
+N
+N#ifdef __cplusplus
+Sextern "C" {
+N#endif
+N
+N#include "option.h"
+N
+N// Memory control 
+N#define rBWSCON    (*(volatile unsigned *)0x48000000) //Bus width & wait status
+N#define rBANKCON0  (*(volatile unsigned *)0x48000004) //Boot ROM control
+N#define rBANKCON1  (*(volatile unsigned *)0x48000008) //BANK1 control
+N#define rBANKCON2  (*(volatile unsigned *)0x4800000c) //BANK2 cControl
+N#define rBANKCON3  (*(volatile unsigned *)0x48000010) //BANK3 control
+N#define rBANKCON4  (*(volatile unsigned *)0x48000014) //BANK4 control
+N#define rBANKCON5  (*(volatile unsigned *)0x48000018) //BANK5 control
+N#define rBANKCON6  (*(volatile unsigned *)0x4800001c) //BANK6 control
+N#define rBANKCON7  (*(volatile unsigned *)0x48000020) //BANK7 control
+N#define rREFRESH   (*(volatile unsigned *)0x48000024) //DRAM/SDRAM refresh
+N#define rBANKSIZE  (*(volatile unsigned *)0x48000028) //Flexible Bank Size
+N#define rMRSRB6    (*(volatile unsigned *)0x4800002c) //Mode register set for SDRAM
+N#define rMRSRB7    (*(volatile unsigned *)0x48000030) //Mode register set for SDRAM
+N
+N
+N// USB Host
+N
+N
+N// INTERRUPT
+N#define rSRCPND     (*(volatile unsigned *)0x4a000000) //Interrupt request status
+N#define rINTMOD     (*(volatile unsigned *)0x4a000004) //Interrupt mode control
+N#define rINTMSK     (*(volatile unsigned *)0x4a000008) //Interrupt mask control
+N#define rPRIORITY   (*(volatile unsigned *)0x4a00000c) //IRQ priority control
+N#define rINTPND     (*(volatile unsigned *)0x4a000010) //Interrupt request status
+N#define rINTOFFSET  (*(volatile unsigned *)0x4a000014) //Interruot request source offset
+N#define rSUBSRCPND  (*(volatile unsigned *)0x4a000018) //Sub source pending
+N#define rINTSUBMSK  (*(volatile unsigned *)0x4a00001c) //Interrupt sub mask
+N
+N
+N// DMA
+N#define rDISRC0     (*(volatile unsigned *)0x4b000000) //DMA 0 Initial source
+N#define rDISRCC0    (*(volatile unsigned *)0x4b000004) //DMA 0 Initial source control
+N#define rDIDST0     (*(volatile unsigned *)0x4b000008) //DMA 0 Initial Destination
+N#define rDIDSTC0    (*(volatile unsigned *)0x4b00000c) //DMA 0 Initial Destination control
+N#define rDCON0      (*(volatile unsigned *)0x4b000010) //DMA 0 Control
+N#define rDSTAT0     (*(volatile unsigned *)0x4b000014) //DMA 0 Status
+N#define rDCSRC0     (*(volatile unsigned *)0x4b000018) //DMA 0 Current source
+N#define rDCDST0     (*(volatile unsigned *)0x4b00001c) //DMA 0 Current destination
+N#define rDMASKTRIG0 (*(volatile unsigned *)0x4b000020) //DMA 0 Mask trigger
+N
+N#define rDISRC1     (*(volatile unsigned *)0x4b000040) //DMA 1 Initial source
+N#define rDISRCC1    (*(volatile unsigned *)0x4b000044) //DMA 1 Initial source control
+N#define rDIDST1     (*(volatile unsigned *)0x4b000048) //DMA 1 Initial Destination
+N#define rDIDSTC1    (*(volatile unsigned *)0x4b00004c) //DMA 1 Initial Destination control
+N#define rDCON1      (*(volatile unsigned *)0x4b000050) //DMA 1 Control
+N#define rDSTAT1     (*(volatile unsigned *)0x4b000054) //DMA 1 Status
+N#define rDCSRC1     (*(volatile unsigned *)0x4b000058) //DMA 1 Current source
+N#define rDCDST1     (*(volatile unsigned *)0x4b00005c) //DMA 1 Current destination
+N#define rDMASKTRIG1 (*(volatile unsigned *)0x4b000060) //DMA 1 Mask trigger
+N
+N#define rDISRC2     (*(volatile unsigned *)0x4b000080) //DMA 2 Initial source
+N#define rDISRCC2    (*(volatile unsigned *)0x4b000084) //DMA 2 Initial source control
+N#define rDIDST2     (*(volatile unsigned *)0x4b000088) //DMA 2 Initial Destination
+N#define rDIDSTC2    (*(volatile unsigned *)0x4b00008c) //DMA 2 Initial Destination control
+N#define rDCON2      (*(volatile unsigned *)0x4b000090) //DMA 2 Control
+N#define rDSTAT2     (*(volatile unsigned *)0x4b000094) //DMA 2 Status
+N#define rDCSRC2     (*(volatile unsigned *)0x4b000098) //DMA 2 Current source
+N#define rDCDST2     (*(volatile unsigned *)0x4b00009c) //DMA 2 Current destination
+N#define rDMASKTRIG2 (*(volatile unsigned *)0x4b0000a0) //DMA 2 Mask trigger
+N
+N#define rDISRC3     (*(volatile unsigned *)0x4b0000c0) //DMA 3 Initial source
+N#define rDISRCC3    (*(volatile unsigned *)0x4b0000c4) //DMA 3 Initial source control
+N#define rDIDST3     (*(volatile unsigned *)0x4b0000c8) //DMA 3 Initial Destination
+N#define rDIDSTC3    (*(volatile unsigned *)0x4b0000cc) //DMA 3 Initial Destination control
+N#define rDCON3      (*(volatile unsigned *)0x4b0000d0) //DMA 3 Control
+N#define rDSTAT3     (*(volatile unsigned *)0x4b0000d4) //DMA 3 Status
+N#define rDCSRC3     (*(volatile unsigned *)0x4b0000d8) //DMA 3 Current source
+N#define rDCDST3     (*(volatile unsigned *)0x4b0000dc) //DMA 3 Current destination
+N#define rDMASKTRIG3 (*(volatile unsigned *)0x4b0000e0) //DMA 3 Mask trigger
+N
+N
+N// CLOCK & POWER MANAGEMENT
+N#define rLOCKTIME   (*(volatile unsigned *)0x4c000000) //PLL lock time counter
+N#define rMPLLCON    (*(volatile unsigned *)0x4c000004) //MPLL Control
+N#define rUPLLCON    (*(volatile unsigned *)0x4c000008) //UPLL Control
+N#define rCLKCON     (*(volatile unsigned *)0x4c00000c) //Clock generator control
+N#define rCLKSLOW    (*(volatile unsigned *)0x4c000010) //Slow clock control
+N#define rCLKDIVN    (*(volatile unsigned *)0x4c000014) //Clock divider control
+N
+N
+N// LCD CONTROLLER
+N#define rLCDCON1    (*(volatile unsigned *)0x4d000000) //LCD control 1
+N#define rLCDCON2    (*(volatile unsigned *)0x4d000004) //LCD control 2
+N#define rLCDCON3    (*(volatile unsigned *)0x4d000008) //LCD control 3
+N#define rLCDCON4    (*(volatile unsigned *)0x4d00000c) //LCD control 4
+N#define rLCDCON5    (*(volatile unsigned *)0x4d000010) //LCD control 5
+N#define rLCDSADDR1  (*(volatile unsigned *)0x4d000014) //STN/TFT Frame buffer start address 1
+N#define rLCDSADDR2  (*(volatile unsigned *)0x4d000018) //STN/TFT Frame buffer start address 2
+N#define rLCDSADDR3  (*(volatile unsigned *)0x4d00001c) //STN/TFT Virtual screen address set
+N#define rREDLUT     (*(volatile unsigned *)0x4d000020) //STN Red lookup table
+N#define rGREENLUT   (*(volatile unsigned *)0x4d000024) //STN Green lookup table 
+N#define rBLUELUT    (*(volatile unsigned *)0x4d000028) //STN Blue lookup table
+N#define rDITHMODE   (*(volatile unsigned *)0x4d00004c) //STN Dithering mode
+N#define rTPAL       (*(volatile unsigned *)0x4d000050) //TFT Temporary palette
+N#define rLCDINTPND  (*(volatile unsigned *)0x4d000054) //LCD Interrupt pending
+N#define rLCDSRCPND  (*(volatile unsigned *)0x4d000058) //LCD Interrupt source
+N#define rLCDINTMSK  (*(volatile unsigned *)0x4d00005c) //LCD Interrupt mask
+N#define rLPCSEL     (*(volatile unsigned *)0x4d000060) //LPC3600 Control
+N#define PALETTE     0x4d000400                         //Palette start address
+N
+N
+N// NAND flash
+N#define rNFCONF     (*(volatile unsigned *)0x4e000000)      //NAND Flash configuration
+N#define rNFCMD      (*(volatile UINT8T *)0x4e000004)            //NADD Flash command
+N#define rNFADDR     (*(volatile UINT8T *)0x4e000008)            //NAND Flash address
+N#define rNFDATA     (*(volatile UINT8T *)0x4e00000c)            //NAND Flash data
+N#define rNFSTAT     (*(volatile unsigned *)0x4e000010)      //NAND Flash operation status
+N#define rNFECC      (*(volatile unsigned *)0x4e000014)      //NAND Flash ECC
+N#define rNFECC0     (*(volatile UINT8T  *)0x4e000014)
+N#define rNFECC1     (*(volatile UINT8T  *)0x4e000015)
+N#define rNFECC2     (*(volatile UINT8T  *)0x4e000016)
+N
+N// UART
+N#define rULCON0     (*(volatile unsigned *)0x50000000) //UART 0 Line control
+N#define rUCON0      (*(volatile unsigned *)0x50000004) //UART 0 Control
+N#define rUFCON0     (*(volatile unsigned *)0x50000008) //UART 0 FIFO control
+N#define rUMCON0     (*(volatile unsigned *)0x5000000c) //UART 0 Modem control
+N#define rUTRSTAT0   (*(volatile unsigned *)0x50000010) //UART 0 Tx/Rx status
+N#define rUERSTAT0   (*(volatile unsigned *)0x50000014) //UART 0 Rx error status
+N#define rUFSTAT0    (*(volatile unsigned *)0x50000018) //UART 0 FIFO status
+N#define rUMSTAT0    (*(volatile unsigned *)0x5000001c) //UART 0 Modem status
+N#define rUBRDIV0    (*(volatile unsigned *)0x50000028) //UART 0 Baud rate divisor
+N
+N#define rULCON1     (*(volatile unsigned *)0x50004000) //UART 1 Line control
+N#define rUCON1      (*(volatile unsigned *)0x50004004) //UART 1 Control
+N#define rUFCON1     (*(volatile unsigned *)0x50004008) //UART 1 FIFO control
+N#define rUMCON1     (*(volatile unsigned *)0x5000400c) //UART 1 Modem control
+N#define rUTRSTAT1   (*(volatile unsigned *)0x50004010) //UART 1 Tx/Rx status
+N#define rUERSTAT1   (*(volatile unsigned *)0x50004014) //UART 1 Rx error status
+N#define rUFSTAT1    (*(volatile unsigned *)0x50004018) //UART 1 FIFO status
+N#define rUMSTAT1    (*(volatile unsigned *)0x5000401c) //UART 1 Modem status
+N#define rUBRDIV1    (*(volatile unsigned *)0x50004028) //UART 1 Baud rate divisor
+N
+N#define rULCON2     (*(volatile unsigned *)0x50008000) //UART 2 Line control
+N#define rUCON2      (*(volatile unsigned *)0x50008004) //UART 2 Control
+N#define rUFCON2     (*(volatile unsigned *)0x50008008) //UART 2 FIFO control
+N#define rUMCON2     (*(volatile unsigned *)0x5000800c) //UART 2 Modem control
+N#define rUTRSTAT2   (*(volatile unsigned *)0x50008010) //UART 2 Tx/Rx status
+N#define rUERSTAT2   (*(volatile unsigned *)0x50008014) //UART 2 Rx error status
+N#define rUFSTAT2    (*(volatile unsigned *)0x50008018) //UART 2 FIFO status
+N#define rUMSTAT2    (*(volatile unsigned *)0x5000801c) //UART 2 Modem status
+N#define rUBRDIV2    (*(volatile unsigned *)0x50008028) //UART 2 Baud rate divisor
+N
+N#ifdef __BIG_ENDIAN
+S#define rUTXH0      (*(volatile unsigned char *)0x50000023) //UART 0 Transmission Hold
+S#define rURXH0      (*(volatile unsigned char *)0x50000027) //UART 0 Receive buffer
+S#define rUTXH1      (*(volatile unsigned char *)0x50004023) //UART 1 Transmission Hold
+S#define rURXH1      (*(volatile unsigned char *)0x50004027) //UART 1 Receive buffer
+S#define rUTXH2      (*(volatile unsigned char *)0x50008023) //UART 2 Transmission Hold
+S#define rURXH2      (*(volatile unsigned char *)0x50008027) //UART 2 Receive buffer
+S
+S#define WrUTXH0(ch) (*(volatile unsigned char *)0x50000023)=(unsigned char)(ch)
+S#define RdURXH0()   (*(volatile unsigned char *)0x50000027)
+S#define WrUTXH1(ch) (*(volatile unsigned char *)0x50004023)=(unsigned char)(ch)
+S#define RdURXH1()   (*(volatile unsigned char *)0x50004027)
+S#define WrUTXH2(ch) (*(volatile unsigned char *)0x50008023)=(unsigned char)(ch)
+S#define RdURXH2()   (*(volatile unsigned char *)0x50008027)
+S
+S#define UTXH0       (0x50000020+3)  //Byte_access address by DMA
+S#define URXH0       (0x50000024+3)
+S#define UTXH1       (0x50004020+3)
+S#define URXH1       (0x50004024+3)
+S#define UTXH2       (0x50008020+3)
+S#define URXH2       (0x50008024+3)
+S
+N#else //Little Endian
+N#define rUTXH0 (*(volatile unsigned char *)0x50000020) //UART 0 Transmission Hold
+N#define rURXH0 (*(volatile unsigned char *)0x50000024) //UART 0 Receive buffer
+N#define rUTXH1 (*(volatile unsigned char *)0x50004020) //UART 1 Transmission Hold
+N#define rURXH1 (*(volatile unsigned char *)0x50004024) //UART 1 Receive buffer
+N#define rUTXH2 (*(volatile unsigned char *)0x50008020) //UART 2 Transmission Hold
+N#define rURXH2 (*(volatile unsigned char *)0x50008024) //UART 2 Receive buffer
+N
+N#define WrUTXH0(ch) (*(volatile unsigned char *)0x50000020)=(unsigned char)(ch)
+N#define RdURXH0()   (*(volatile unsigned char *)0x50000024)
+N#define WrUTXH1(ch) (*(volatile unsigned char *)0x50004020)=(unsigned char)(ch)
+N#define RdURXH1()   (*(volatile unsigned char *)0x50004024)
+N#define WrUTXH2(ch) (*(volatile unsigned char *)0x50008020)=(unsigned char)(ch)
+N#define RdURXH2()   (*(volatile unsigned char *)0x50008024)
+N
+N#define UTXH0       (0x50000020)    //Byte_access address by DMA
+N#define URXH0       (0x50000024)
+N#define UTXH1       (0x50004020)
+N#define URXH1       (0x50004024)
+N#define UTXH2       (0x50008020)
+N#define URXH2       (0x50008024)
+N#endif
+N
+N
+N// PWM TIMER
+N#define rTCFG0  (*(volatile unsigned *)0x51000000) //Timer 0 configuration
+N#define rTCFG1  (*(volatile unsigned *)0x51000004) //Timer 1 configuration
+N#define rTCON   (*(volatile unsigned *)0x51000008) //Timer control
+N#define rTCNTB0 (*(volatile unsigned *)0x5100000c) //Timer count buffer 0
+N#define rTCMPB0 (*(volatile unsigned *)0x51000010) //Timer compare buffer 0
+N#define rTCNTO0 (*(volatile unsigned *)0x51000014) //Timer count observation 0
+N#define rTCNTB1 (*(volatile unsigned *)0x51000018) //Timer count buffer 1
+N#define rTCMPB1 (*(volatile unsigned *)0x5100001c) //Timer compare buffer 1
+N#define rTCNTO1 (*(volatile unsigned *)0x51000020) //Timer count observation 1
+N#define rTCNTB2 (*(volatile unsigned *)0x51000024) //Timer count buffer 2
+N#define rTCMPB2 (*(volatile unsigned *)0x51000028) //Timer compare buffer 2
+N#define rTCNTO2 (*(volatile unsigned *)0x5100002c) //Timer count observation 2
+N#define rTCNTB3 (*(volatile unsigned *)0x51000030) //Timer count buffer 3
+N#define rTCMPB3 (*(volatile unsigned *)0x51000034) //Timer compare buffer 3
+N#define rTCNTO3 (*(volatile unsigned *)0x51000038) //Timer count observation 3
+N#define rTCNTB4 (*(volatile unsigned *)0x5100003c) //Timer count buffer 4
+N#define rTCNTO4 (*(volatile unsigned *)0x51000040) //Timer count observation 4
+N
+N
+N// USB DEVICE
+N#ifdef __BIG_ENDIAN
+S<ERROR IF BIG_ENDIAN>
+S#define rFUNC_ADDR_REG     (*(volatile unsigned char *)0x52000143) //Function address
+S#define rPWR_REG           (*(volatile unsigned char *)0x52000147) //Power management
+S#define rEP_INT_REG        (*(volatile unsigned char *)0x5200014b) //EP Interrupt pending and clear
+S#define rUSB_INT_REG       (*(volatile unsigned char *)0x5200015b) //USB Interrupt pending and clear
+S#define rEP_INT_EN_REG     (*(volatile unsigned char *)0x5200015f) //Interrupt enable
+S#define rUSB_INT_EN_REG    (*(volatile unsigned char *)0x5200016f)
+S#define rFRAME_NUM1_REG    (*(volatile unsigned char *)0x52000173) //Frame number lower byte
+S#define rFRAME_NUM2_REG    (*(volatile unsigned char *)0x52000177) //Frame number higher byte
+S#define rINDEX_REG         (*(volatile unsigned char *)0x5200017b) //Register index
+S#define rMAXP_REG          (*(volatile unsigned char *)0x52000183) //Endpoint max packet
+S#define rEP0_CSR           (*(volatile unsigned char *)0x52000187) //Endpoint 0 status
+S#define rIN_CSR1_REG       (*(volatile unsigned char *)0x52000187) //In endpoint control status
+S#define rIN_CSR2_REG       (*(volatile unsigned char *)0x5200018b)
+S#define rOUT_CSR1_REG      (*(volatile unsigned char *)0x52000193) //Out endpoint control status
+S#define rOUT_CSR2_REG      (*(volatile unsigned char *)0x52000197)
+S#define rOUT_FIFO_CNT1_REG (*(volatile unsigned char *)0x5200019b) //Endpoint out write count
+S#define rOUT_FIFO_CNT2_REG (*(volatile unsigned char *)0x5200019f)
+S#define rEP0_FIFO          (*(volatile unsigned char *)0x520001c3) //Endpoint 0 FIFO
+S#define rEP1_FIFO          (*(volatile unsigned char *)0x520001c7) //Endpoint 1 FIFO
+S#define rEP2_FIFO          (*(volatile unsigned char *)0x520001cb) //Endpoint 2 FIFO
+S#define rEP3_FIFO          (*(volatile unsigned char *)0x520001cf) //Endpoint 3 FIFO
+S#define rEP4_FIFO          (*(volatile unsigned char *)0x520001d3) //Endpoint 4 FIFO
+S#define rEP1_DMA_CON       (*(volatile unsigned char *)0x52000203) //EP1 DMA interface control
+S#define rEP1_DMA_UNIT      (*(volatile unsigned char *)0x52000207) //EP1 DMA Tx unit counter
+S#define rEP1_DMA_FIFO      (*(volatile unsigned char *)0x5200020b) //EP1 DMA Tx FIFO counter
+S#define rEP1_DMA_TTC_L     (*(volatile unsigned char *)0x5200020f) //EP1 DMA total Tx counter
+S#define rEP1_DMA_TTC_M     (*(volatile unsigned char *)0x52000213)
+S#define rEP1_DMA_TTC_H     (*(volatile unsigned char *)0x52000217)
+S#define rEP2_DMA_CON       (*(volatile unsigned char *)0x5200021b) //EP2 DMA interface control
+S#define rEP2_DMA_UNIT      (*(volatile unsigned char *)0x5200021f) //EP2 DMA Tx unit counter
+S#define rEP2_DMA_FIFO      (*(volatile unsigned char *)0x52000223) //EP2 DMA Tx FIFO counter
+S#define rEP2_DMA_TTC_L     (*(volatile unsigned char *)0x52000227) //EP2 DMA total Tx counter
+S#define rEP2_DMA_TTC_M     (*(volatile unsigned char *)0x5200022b)
+S#define rEP2_DMA_TTC_H     (*(volatile unsigned char *)0x5200022f)
+S#define rEP3_DMA_CON       (*(volatile unsigned char *)0x52000243) //EP3 DMA interface control
+S#define rEP3_DMA_UNIT      (*(volatile unsigned char *)0x52000247) //EP3 DMA Tx unit counter
+S#define rEP3_DMA_FIFO      (*(volatile unsigned char *)0x5200024b) //EP3 DMA Tx FIFO counter
+S#define rEP3_DMA_TTC_L     (*(volatile unsigned char *)0x5200024f) //EP3 DMA total Tx counter
+S#define rEP3_DMA_TTC_M     (*(volatile unsigned char *)0x52000253)
+S#define rEP3_DMA_TTC_H     (*(volatile unsigned char *)0x52000257)
+S#define rEP4_DMA_CON       (*(volatile unsigned char *)0x5200025b) //EP4 DMA interface control
+S#define rEP4_DMA_UNIT      (*(volatile unsigned char *)0x5200025f) //EP4 DMA Tx unit counter
+S#define rEP4_DMA_FIFO      (*(volatile unsigned char *)0x52000263) //EP4 DMA Tx FIFO counter
+S#define rEP4_DMA_TTC_L     (*(volatile unsigned char *)0x52000267) //EP4 DMA total Tx counter
+S#define rEP4_DMA_TTC_M     (*(volatile unsigned char *)0x5200026b)
+S#define rEP4_DMA_TTC_H     (*(volatile unsigned char *)0x5200026f)
+S
+N#else  // Little Endian
+N#define rFUNC_ADDR_REG     (*(volatile unsigned char *)0x52000140) //Function address
+N#define rPWR_REG           (*(volatile unsigned char *)0x52000144) //Power management
+N#define rEP_INT_REG        (*(volatile unsigned char *)0x52000148) //EP Interrupt pending and clear
+N#define rUSB_INT_REG       (*(volatile unsigned char *)0x52000158) //USB Interrupt pending and clear
+N#define rEP_INT_EN_REG     (*(volatile unsigned char *)0x5200015c) //Interrupt enable
+N#define rUSB_INT_EN_REG    (*(volatile unsigned char *)0x5200016c)
+N#define rFRAME_NUM1_REG    (*(volatile unsigned char *)0x52000170) //Frame number lower byte
+N#define rFRAME_NUM2_REG    (*(volatile unsigned char *)0x52000174) //Frame number higher byte
+N#define rINDEX_REG         (*(volatile unsigned char *)0x52000178) //Register index
+N#define rMAXP_REG          (*(volatile unsigned char *)0x52000180) //Endpoint max packet
+N#define rEP0_CSR           (*(volatile unsigned char *)0x52000184) //Endpoint 0 status
+N#define rIN_CSR1_REG       (*(volatile unsigned char *)0x52000184) //In endpoint control status
+N#define rIN_CSR2_REG       (*(volatile unsigned char *)0x52000188)
+N#define rOUT_CSR1_REG      (*(volatile unsigned char *)0x52000190) //Out endpoint control status
+N#define rOUT_CSR2_REG      (*(volatile unsigned char *)0x52000194)
+N#define rOUT_FIFO_CNT1_REG (*(volatile unsigned char *)0x52000198) //Endpoint out write count
+N#define rOUT_FIFO_CNT2_REG (*(volatile unsigned char *)0x5200019c)
+N#define rEP0_FIFO          (*(volatile unsigned char *)0x520001c0) //Endpoint 0 FIFO
+N#define rEP1_FIFO          (*(volatile unsigned char *)0x520001c4) //Endpoint 1 FIFO
+N#define rEP2_FIFO          (*(volatile unsigned char *)0x520001c8) //Endpoint 2 FIFO
+N#define rEP3_FIFO          (*(volatile unsigned char *)0x520001cc) //Endpoint 3 FIFO
+N#define rEP4_FIFO          (*(volatile unsigned char *)0x520001d0) //Endpoint 4 FIFO
+N#define rEP1_DMA_CON       (*(volatile unsigned char *)0x52000200) //EP1 DMA interface control
+N#define rEP1_DMA_UNIT      (*(volatile unsigned char *)0x52000204) //EP1 DMA Tx unit counter
+N#define rEP1_DMA_FIFO      (*(volatile unsigned char *)0x52000208) //EP1 DMA Tx FIFO counter
+N#define rEP1_DMA_TTC_L     (*(volatile unsigned char *)0x5200020c) //EP1 DMA total Tx counter
+N#define rEP1_DMA_TTC_M     (*(volatile unsigned char *)0x52000210)
+N#define rEP1_DMA_TTC_H     (*(volatile unsigned char *)0x52000214)
+N#define rEP2_DMA_CON       (*(volatile unsigned char *)0x52000218) //EP2 DMA interface control
+N#define rEP2_DMA_UNIT      (*(volatile unsigned char *)0x5200021c) //EP2 DMA Tx unit counter
+N#define rEP2_DMA_FIFO      (*(volatile unsigned char *)0x52000220) //EP2 DMA Tx FIFO counter
+N#define rEP2_DMA_TTC_L     (*(volatile unsigned char *)0x52000224) //EP2 DMA total Tx counter
+N#define rEP2_DMA_TTC_M     (*(volatile unsigned char *)0x52000228)
+N#define rEP2_DMA_TTC_H     (*(volatile unsigned char *)0x5200022c)
+N#define rEP3_DMA_CON       (*(volatile unsigned char *)0x52000240) //EP3 DMA interface control
+N#define rEP3_DMA_UNIT      (*(volatile unsigned char *)0x52000244) //EP3 DMA Tx unit counter
+N#define rEP3_DMA_FIFO      (*(volatile unsigned char *)0x52000248) //EP3 DMA Tx FIFO counter
+N#define rEP3_DMA_TTC_L     (*(volatile unsigned char *)0x5200024c) //EP3 DMA total Tx counter
+N#define rEP3_DMA_TTC_M     (*(volatile unsigned char *)0x52000250)
+N#define rEP3_DMA_TTC_H     (*(volatile unsigned char *)0x52000254)
+N#define rEP4_DMA_CON       (*(volatile unsigned char *)0x52000258) //EP4 DMA interface control
+N#define rEP4_DMA_UNIT      (*(volatile unsigned char *)0x5200025c) //EP4 DMA Tx unit counter
+N#define rEP4_DMA_FIFO      (*(volatile unsigned char *)0x52000260) //EP4 DMA Tx FIFO counter
+N#define rEP4_DMA_TTC_L     (*(volatile unsigned char *)0x52000264) //EP4 DMA total Tx counter
+N#define rEP4_DMA_TTC_M     (*(volatile unsigned char *)0x52000268)
+N#define rEP4_DMA_TTC_H     (*(volatile unsigned char *)0x5200026c)
+N#endif   // __BIG_ENDIAN
+N
+N
+N// WATCH DOG TIMER
+N#define rWTCON   (*(volatile unsigned *)0x53000000) //Watch-dog timer mode
+N#define rWTDAT   (*(volatile unsigned *)0x53000004) //Watch-dog timer data
+N#define rWTCNT   (*(volatile unsigned *)0x53000008) //Eatch-dog timer count
+N
+N
+N// IIC
+N#define rIICCON  (*(volatile unsigned *)0x54000000) //IIC control
+N#define rIICSTAT (*(volatile unsigned *)0x54000004) //IIC status
+N#define rIICADD  (*(volatile unsigned *)0x54000008) //IIC address
+N#define rIICDS   (*(volatile unsigned *)0x5400000c) //IIC data shift
+N
+N
+N// IIS
+N#define rIISCON  (*(volatile unsigned *)0x55000000) //IIS Control
+N#define rIISMOD  (*(volatile unsigned *)0x55000004) //IIS Mode
+N#define rIISPSR  (*(volatile unsigned *)0x55000008) //IIS Prescaler
+N#define rIISFCON (*(volatile unsigned *)0x5500000c) //IIS FIFO control
+N
+N#ifdef __BIG_ENDIAN
+S#define IISFIFO  ((volatile unsigned short *)0x55000012) //IIS FIFO entry
+S
+N#else //Little Endian
+N#define IISFIFO  ((volatile unsigned short *)0x55000010) //IIS FIFO entry
+N
+N#endif
+N
+N
+N// I/O PORT 
+N#define rGPACON    (*(volatile unsigned *)0x56000000) //Port A control
+N#define rGPADAT    (*(volatile unsigned *)0x56000004) //Port A data
+N                        
+N#define rGPBCON    (*(volatile unsigned *)0x56000010) //Port B control
+N#define rGPBDAT    (*(volatile unsigned *)0x56000014) //Port B data
+N#define rGPBUP     (*(volatile unsigned *)0x56000018) //Pull-up control B
+N                        
+N#define rGPCCON    (*(volatile unsigned *)0x56000020) //Port C control
+N#define rGPCDAT    (*(volatile unsigned *)0x56000024) //Port C data
+N#define rGPCUP     (*(volatile unsigned *)0x56000028) //Pull-up control C
+N                        
+N#define rGPDCON    (*(volatile unsigned *)0x56000030) //Port D control
+N#define rGPDDAT    (*(volatile unsigned *)0x56000034) //Port D data
+N#define rGPDUP     (*(volatile unsigned *)0x56000038) //Pull-up control D
+N                        
+N#define rGPECON    (*(volatile unsigned *)0x56000040) //Port E control
+N#define rGPEDAT    (*(volatile unsigned *)0x56000044) //Port E data
+N#define rGPEUP     (*(volatile unsigned *)0x56000048) //Pull-up control E
+N                        
+N#define rGPFCON    (*(volatile unsigned *)0x56000050) //Port F control
+N#define rGPFDAT    (*(volatile unsigned *)0x56000054) //Port F data
+N#define rGPFUP     (*(volatile unsigned *)0x56000058) //Pull-up control F
+N                        
+N#define rGPGCON    (*(volatile unsigned *)0x56000060) //Port G control
+N#define rGPGDAT    (*(volatile unsigned *)0x56000064) //Port G data
+N#define rGPGUP     (*(volatile unsigned *)0x56000068) //Pull-up control G
+N                        
+N#define rGPHCON    (*(volatile unsigned *)0x56000070) //Port H control
+N#define rGPHDAT    (*(volatile unsigned *)0x56000074) //Port H data
+N#define rGPHUP     (*(volatile unsigned *)0x56000078) //Pull-up control H
+N                        
+N#define rMISCCR    (*(volatile unsigned *)0x56000080) //Miscellaneous control
+N#define rDCLKCON   (*(volatile unsigned *)0x56000084) //DCLK0/1 control
+N#define rEXTINT0   (*(volatile unsigned *)0x56000088) //External interrupt control register 0
+N#define rEXTINT1   (*(volatile unsigned *)0x5600008c) //External interrupt control register 1
+N#define rEXTINT2   (*(volatile unsigned *)0x56000090) //External interrupt control register 2
+N#define rEINTFLT0  (*(volatile unsigned *)0x56000094) //Reserved
+N#define rEINTFLT1  (*(volatile unsigned *)0x56000098) //Reserved
+N#define rEINTFLT2  (*(volatile unsigned *)0x5600009c) //External interrupt filter control register 2
+N#define rEINTFLT3  (*(volatile unsigned *)0x560000a0) //External interrupt filter control register 3
+N#define rEINTMASK  (*(volatile unsigned *)0x560000a4) //External interrupt mask
+N#define rEINTPEND  (*(volatile unsigned *)0x560000a8) //External interrupt pending
+N#define rGSTATUS0  (*(volatile unsigned *)0x560000ac) //External pin status
+N#define rGSTATUS1  (*(volatile unsigned *)0x560000b0) //Chip ID(0x32410000)
+N#define rGSTATUS2  (*(volatile unsigned *)0x560000b4) //Reset type
+N#define rGSTATUS3  (*(volatile unsigned *)0x560000b8) //Saved data0(32-bit) before entering POWER_OFF mode 
+N#define rGSTATUS4  (*(volatile unsigned *)0x560000bc) //Saved data0(32-bit) before entering POWER_OFF mode 
+N
+N
+N// RTC
+N#ifdef __BIG_ENDIAN
+S#define rRTCCON    (*(volatile unsigned char *)0x57000043) //RTC control
+S#define rTICNT     (*(volatile unsigned char *)0x57000047) //Tick time count
+S#define rRTCALM    (*(volatile unsigned char *)0x57000053) //RTC alarm control
+S#define rALMSEC    (*(volatile unsigned char *)0x57000057) //Alarm second
+S#define rALMMIN    (*(volatile unsigned char *)0x5700005b) //Alarm minute
+S#define rALMHOUR   (*(volatile unsigned char *)0x5700005f) //Alarm Hour
+S#define rALMDATE   (*(volatile unsigned char *)0x57000063) //Alarm day     <-- May 06, 2002 SOP
+S#define rALMMON    (*(volatile unsigned char *)0x57000067) //Alarm month
+S#define rALMYEAR   (*(volatile unsigned char *)0x5700006b) //Alarm year
+S#define rRTCRST    (*(volatile unsigned char *)0x5700006f) //RTC round reset
+S#define rBCDSEC    (*(volatile unsigned char *)0x57000073) //BCD second
+S#define rBCDMIN    (*(volatile unsigned char *)0x57000077) //BCD minute
+S#define rBCDHOUR   (*(volatile unsigned char *)0x5700007b) //BCD hour
+S#define rBCDDATE   (*(volatile unsigned char *)0x5700007f) //BCD day       <-- May 06, 2002 SOP
+S#define rBCDDAY    (*(volatile unsigned char *)0x57000083) //BCD date      <-- May 06, 2002 SOP
+S#define rBCDMON    (*(volatile unsigned char *)0x57000087) //BCD month
+S#define rBCDYEAR   (*(volatile unsigned char *)0x5700008b) //BCD year
+S
+N#else //Little Endian
+N#define rRTCCON    (*(volatile unsigned char *)0x57000040) //RTC control
+N#define rTICNT     (*(volatile unsigned char *)0x57000044) //Tick time count
+N#define rRTCALM    (*(volatile unsigned char *)0x57000050) //RTC alarm control
+N#define rALMSEC    (*(volatile unsigned char *)0x57000054) //Alarm second
+N#define rALMMIN    (*(volatile unsigned char *)0x57000058) //Alarm minute
+N#define rALMHOUR   (*(volatile unsigned char *)0x5700005c) //Alarm Hour
+N#define rALMDATE   (*(volatile unsigned char *)0x57000060) //Alarm day      <-- May 06, 2002 SOP
+N#define rALMMON    (*(volatile unsigned char *)0x57000064) //Alarm month
+N#define rALMYEAR   (*(volatile unsigned char *)0x57000068) //Alarm year
+N#define rRTCRST    (*(volatile unsigned char *)0x5700006c) //RTC round reset
+N#define rBCDSEC    (*(volatile unsigned char *)0x57000070) //BCD second
+N#define rBCDMIN    (*(volatile unsigned char *)0x57000074) //BCD minute
+N#define rBCDHOUR   (*(volatile unsigned char *)0x57000078) //BCD hour
+N#define rBCDDATE   (*(volatile unsigned char *)0x5700007c) //BCD day        <-- May 06, 2002 SOP
+N#define rBCDDAY    (*(volatile unsigned char *)0x57000080) //BCD date       <-- May 06, 2002 SOP
+N#define rBCDMON    (*(volatile unsigned char *)0x57000084) //BCD month
+N#define rBCDYEAR   (*(volatile unsigned char *)0x57000088) //BCD year
+N#endif  //RTC
+N
+N
+N// ADC
+N#define rADCCON    (*(volatile unsigned *)0x58000000) //ADC control
+N#define rADCTSC    (*(volatile unsigned *)0x58000004) //ADC touch screen control
+N#define rADCDLY    (*(volatile unsigned *)0x58000008) //ADC start or Interval Delay
+N#define rADCDAT0   (*(volatile unsigned *)0x5800000c) //ADC conversion data 0
+N#define rADCDAT1   (*(volatile unsigned *)0x58000010) //ADC conversion data 1                   
+N                        
+N// SPI          
+N#define rSPCON0    (*(volatile unsigned *)0x59000000) //SPI0 control
+N#define rSPSTA0    (*(volatile unsigned *)0x59000004) //SPI0 status
+N#define rSPPIN0    (*(volatile unsigned *)0x59000008) //SPI0 pin control
+N#define rSPPRE0    (*(volatile unsigned *)0x5900000c) //SPI0 baud rate prescaler
+N#define rSPTDAT0   (*(volatile unsigned *)0x59000010) //SPI0 Tx data
+N#define rSPRDAT0   (*(volatile unsigned *)0x59000014) //SPI0 Rx data
+N
+N#define rSPCON1    (*(volatile unsigned *)0x59000020) //SPI1 control
+N#define rSPSTA1    (*(volatile unsigned *)0x59000024) //SPI1 status
+N#define rSPPIN1    (*(volatile unsigned *)0x59000028) //SPI1 pin control
+N#define rSPPRE1    (*(volatile unsigned *)0x5900002c) //SPI1 baud rate prescaler
+N#define rSPTDAT1   (*(volatile unsigned *)0x59000030) //SPI1 Tx data
+N#define rSPRDAT1   (*(volatile unsigned *)0x59000034) //SPI1 Rx data
+N
+N
+N// SD Interface
+N#define rSDICON     (*(volatile unsigned *)0x5a000000) //SDI control
+N#define rSDIPRE     (*(volatile unsigned *)0x5a000004) //SDI baud rate prescaler
+N#define rSDICARG    (*(volatile unsigned *)0x5a000008) //SDI command argument
+N#define rSDICCON    (*(volatile unsigned *)0x5a00000c) //SDI command control
+N#define rSDICSTA    (*(volatile unsigned *)0x5a000010) //SDI command status
+N#define rSDIRSP0    (*(volatile unsigned *)0x5a000014) //SDI response 0
+N#define rSDIRSP1    (*(volatile unsigned *)0x5a000018) //SDI response 1
+N#define rSDIRSP2    (*(volatile unsigned *)0x5a00001c) //SDI response 2
+N#define rSDIRSP3    (*(volatile unsigned *)0x5a000020) //SDI response 3
+N#define rSDIDTIMER  (*(volatile unsigned *)0x5a000024) //SDI data/busy timer
+N#define rSDIBSIZE   (*(volatile unsigned *)0x5a000028) //SDI block size
+N#define rSDIDCON    (*(volatile unsigned *)0x5a00002c) //SDI data control
+N#define rSDIDCNT    (*(volatile unsigned *)0x5a000030) //SDI data remain counter
+N#define rSDIDSTA    (*(volatile unsigned *)0x5a000034) //SDI data status
+N#define rSDIFSTA    (*(volatile unsigned *)0x5a000038) //SDI FIFO status
+N#define rSDIIMSK    (*(volatile unsigned *)0x5a000040) //SDI interrupt mask
+N
+N#ifdef __BIG_ENDIAN
+S#define rSDIDAT    (*(volatile unsigned *)0x5a00003f) //SDI data
+S#define SDIDAT     0x5a00003f
+N#else  // Little Endian
+N#define rSDIDAT    (*(volatile unsigned *)0x5a00003c) //SDI data
+N#define SDIDAT     0x5a00003c
+N#endif   //SD Interface
+N             
+N#define _ISR_STARTADDRESS 0x33ffff00
+N// ISR
+N#define pISR_RESET     (*(unsigned *)(_ISR_STARTADDRESS+0x0))
+N#define pISR_UNDEF     (*(unsigned *)(_ISR_STARTADDRESS+0x4))
+N#define pISR_SWI       (*(unsigned *)(_ISR_STARTADDRESS+0x8))
+N#define pISR_PABORT    (*(unsigned *)(_ISR_STARTADDRESS+0xc))
+N#define pISR_DABORT    (*(unsigned *)(_ISR_STARTADDRESS+0x10))
+N#define pISR_RESERVED  (*(unsigned *)(_ISR_STARTADDRESS+0x14))
+N#define pISR_IRQ       (*(unsigned *)(_ISR_STARTADDRESS+0x18))
+N#define pISR_FIQ       (*(unsigned *)(_ISR_STARTADDRESS+0x1c))
+N
+N#define pISR_EINT0     (*(unsigned *)(_ISR_STARTADDRESS+0x20))
+N#define pISR_EINT1     (*(unsigned *)(_ISR_STARTADDRESS+0x24))
+N#define pISR_EINT2     (*(unsigned *)(_ISR_STARTADDRESS+0x28))
+N#define pISR_EINT3     (*(unsigned *)(_ISR_STARTADDRESS+0x2c))
+N#define pISR_EINT4_7   (*(unsigned *)(_ISR_STARTADDRESS+0x30))
+N#define pISR_EINT8_23  (*(unsigned *)(_ISR_STARTADDRESS+0x34))
+N#define pISR_NOTUSED6  (*(unsigned *)(_ISR_STARTADDRESS+0x38))
+N#define pISR_BAT_FLT   (*(unsigned *)(_ISR_STARTADDRESS+0x3c))
+N#define pISR_TICK      (*(unsigned *)(_ISR_STARTADDRESS+0x40))
+N#define pISR_WDT       (*(unsigned *)(_ISR_STARTADDRESS+0x44))
+N#define pISR_TIMER0    (*(unsigned *)(_ISR_STARTADDRESS+0x48))
+N#define pISR_TIMER1    (*(unsigned *)(_ISR_STARTADDRESS+0x4c))
+N#define pISR_TIMER2    (*(unsigned *)(_ISR_STARTADDRESS+0x50))
+N#define pISR_TIMER3    (*(unsigned *)(_ISR_STARTADDRESS+0x54))
+N#define pISR_TIMER4    (*(unsigned *)(_ISR_STARTADDRESS+0x58))
+N#define pISR_UART2     (*(unsigned *)(_ISR_STARTADDRESS+0x5c))
+N#define pISR_LCD       (*(unsigned *)(_ISR_STARTADDRESS+0x60))
+N#define pISR_DMA0      (*(unsigned *)(_ISR_STARTADDRESS+0x64))
+N#define pISR_DMA1      (*(unsigned *)(_ISR_STARTADDRESS+0x68))
+N#define pISR_DMA2      (*(unsigned *)(_ISR_STARTADDRESS+0x6c))
+N#define pISR_DMA3      (*(unsigned *)(_ISR_STARTADDRESS+0x70))
+N#define pISR_SDI       (*(unsigned *)(_ISR_STARTADDRESS+0x74))
+N#define pISR_SPI0      (*(unsigned *)(_ISR_STARTADDRESS+0x78))
+N#define pISR_UART1     (*(unsigned *)(_ISR_STARTADDRESS+0x7c))
+N#define pISR_NOTUSED24 (*(unsigned *)(_ISR_STARTADDRESS+0x80))
+N#define pISR_USBD      (*(unsigned *)(_ISR_STARTADDRESS+0x84))
+N#define pISR_USBH      (*(unsigned *)(_ISR_STARTADDRESS+0x88))
+N#define pISR_IIC       (*(unsigned *)(_ISR_STARTADDRESS+0x8c))
+N#define pISR_UART0     (*(unsigned *)(_ISR_STARTADDRESS+0x90))
+N#define pISR_SPI1      (*(unsigned *)(_ISR_STARTADDRESS+0x94))
+N#define pISR_RTC       (*(unsigned *)(_ISR_STARTADDRESS+0x98))
+N#define pISR_ADC       (*(unsigned *)(_ISR_STARTADDRESS+0x9c))
+N
+N
+N// PENDING BIT
+N#define BIT_EINT0      (0x1)
+N#define BIT_EINT1      (0x1<<1)
+N#define BIT_EINT2      (0x1<<2)
+N#define BIT_EINT3      (0x1<<3)
+N#define BIT_EINT4_7    (0x1<<4)
+N#define BIT_EINT8_23   (0x1<<5)
+N#define BIT_NOTUSED6   (0x1<<6)
+N#define BIT_BAT_FLT    (0x1<<7)
+N#define BIT_TICK       (0x1<<8)
+N#define BIT_WDT        (0x1<<9)
+N#define BIT_TIMER0     (0x1<<10)
+N#define BIT_TIMER1     (0x1<<11)
+N#define BIT_TIMER2     (0x1<<12)
+N#define BIT_TIMER3     (0x1<<13)
+N#define BIT_TIMER4     (0x1<<14)
+N#define BIT_UART2      (0x1<<15)
+N#define BIT_LCD        (0x1<<16)
+N#define BIT_DMA0       (0x1<<17)
+N#define BIT_DMA1       (0x1<<18)
+N#define BIT_DMA2       (0x1<<19)
+N#define BIT_DMA3       (0x1<<20)
+N#define BIT_SDI        (0x1<<21)
+N#define BIT_SPI0       (0x1<<22)
+N#define BIT_UART1      (0x1<<23)
+N#define BIT_NOTUSED24  (0x1<<24)
+N#define BIT_USBD       (0x1<<25)
+N#define BIT_USBH       (0x1<<26)
+N#define BIT_IIC        (0x1<<27)
+N#define BIT_UART0      (0x1<<28)
+N#define BIT_SPI1       (0x1<<29)
+N#define BIT_RTC        (0x1<<30)
+N#define BIT_ADC        (0x80000000) //(0x1<<31)
+N#define BIT_ALLMSK     (0xffffffff)
+N
+N#define BIT_SUB_ALLMSK (0x7ff)
+N#define BIT_SUB_ADC    (0x1<<10)
+N#define BIT_SUB_TC     (0x1<<9)
+N#define BIT_SUB_ERR2   (0x1<<8)
+N#define BIT_SUB_TXD2   (0x1<<7)
+N#define BIT_SUB_RXD2   (0x1<<6)
+N#define BIT_SUB_ERR1   (0x1<<5)
+N#define BIT_SUB_TXD1   (0x1<<4)
+N#define BIT_SUB_RXD1   (0x1<<3)
+N#define BIT_SUB_ERR0   (0x1<<2)
+N#define BIT_SUB_TXD0   (0x1<<1)
+N#define BIT_SUB_RXD0   (0x1<<0)
+N
+N#define ClearPending(bit) {\
+N                rSRCPND = bit;\
+N                rINTPND = rINTPND;} // precent write wrong data
+X#define ClearPending(bit) {                rSRCPND = bit;                rINTPND = rINTPND;} 
+N
+N//Wait until rINTPND is changed for the case that the ISR is very short.
+N
+N#ifdef __cplusplus
+S}
+N#endif
+N#endif  //__2410ADDR_H___
+N
+L 16 "..\Common\Inc\2410lib.h" 2
+N
+N#ifndef __2410lib_h__
+N#define __2410lib_h__
+N
+N#ifdef __cplusplus
+Sextern "C" {
+N#endif
+N
+N/*------------------------------------------------------------------------------------------*/
+N/*	 								constant define						 				    */
+N/*------------------------------------------------------------------------------------------*/
+N#define DOWNLOAD_ADDRESS _RAM_STARTADDRESS
+N#define DEBUG_OUT uart_printf
+N
+N#define min(x1,x2) (((x1)<(x2))? (x1):(x2))
+N#define max(x1,x2) (((x1)>(x2))? (x1):(x2))
+N
+N#define ONESEC0 (62500)								// 16us resolution, max 1.04 sec
+N#define ONESEC1 (31250)								// 32us resolution, max 2.09 sec
+N#define ONESEC2 (15625)								// 64us resolution, max 4.19 sec
+N#define ONESEC3 (7812)								// 128us resolution, max 8.38 sec
+N#define ONESEC4 (PCLK/128/(0xff+1))					// @60Mhz, 128*4us resolution, max 32.53 sec
+N
+N#define NULL 0
+N#define LCD   0xDD									// LCD symbol
+N#define UART0 0x0									// UART symbol
+N#define UART1 0x1
+N#define UART2 0xBB
+N#define EnterPWDN(clkcon) ((void (*)(int))0x20)(clkcon)
+N
+N/*------------------------------------------------------------------------------------------*/
+N/*	 								fuction declare						 				    */
+N/*------------------------------------------------------------------------------------------*/
+Nvoid StartPointAfterPowerOffWakeUp(void);  
+Nvoid sys_init(void);
+Nvoid delay(int time);								// Watchdog Timer is used.
+Nvoid port_init(void);
+Nvoid uart_select(int ch);
+Nvoid uart_txempty(int ch);
+Nvoid uart_init(int nMainClk, int nBaud, int nChannel);
+Nchar uart_getch(void);
+Nchar uart_getkey(void);
+Nint  uart_getintnum(void);
+Nvoid uart_sendbyte(int data);
+Nvoid uart_printf(char *fmt,...);
+Nvoid uart_sendstring(char *pt);
+Nvoid timer_start(int divider);						// Watchdog Timer is used.
+Nint  timer_stop(void);								// Watchdog Timer is used.
+N
+Nvoid led_display(int data);
+N
+Nvoid change_value_MPLL(int m,int p,int s);
+Nvoid change_clock_divider(int hdivn,int pdivn);
+Nvoid ChangeUPllValue(int m,int p,int s);
+Nvoid InitMMU(unsigned int *pTranslationTable);		
+N
+N/*------------------------------------------------------------------------------------------*/
+N/*	 								inline fuction define								    */
+N/*------------------------------------------------------------------------------------------*/
+N/*********************************************************************************************
+N* name:		ARM_WriteTTB
+N* func:		Write Translation table base  register
+N* para:		TTB Address
+N* ret:		none
+N* modify:
+N* comment:		
+N*********************************************************************************************/
+N__inline void ARM_WriteTTB(unsigned int ttb)
+N{
+N 	__asm("MCR p15, 0, (ttb & 0xFFFFC000), c2, c0, 0");
+N}
+N
+N/*********************************************************************************************
+N* name:		ARM_WriteDomain
+N* func:		Write domain access control
+N* para:		Domain NO.
+N* ret:		none
+N* modify:
+N* comment:		
+N*********************************************************************************************/
+N__inline void ARM_WriteDomain(unsigned int domain)
+N{
+N 	__asm("MCR p15, 0, domain, c3, c0, 0");
+N}
+N
+N/*********************************************************************************************
+N* name:		ARM_ReadControl
+N* func:		Read Control register
+N* para:		none
+N* ret:		none
+N* modify:
+N* comment:		
+N*********************************************************************************************/
+N__inline unsigned int ARM_ReadControl()
+N{
+N	register unsigned int ctl;
+N 	__asm("MRC p15, 0, ctl, c1, c0, 0");
+N 	return ctl;
+N}
+N
+N/*********************************************************************************************
+N* name:		ARM_WriteControl
+N* func:		Write Control register
+N* para:		Control Byte
+N* ret:		none
+N* modify:
+N* comment:		
+N*********************************************************************************************/
+N__inline void ARM_WriteControl(unsigned int ctl)
+N{
+N 	__asm("MCR p15, 0, ctl, c1, c0, 0");
+N}
+N
+N#ifdef __cplusplus
+S}
+N#endif
+N
+N#endif  //__2410lib_h__
+N
+L 2 "Source\tftp\dm9000dbg.c" 2
+N#include "mac.h"
+L 1 ".\INC\tftp\mac.h" 1
+N#ifndef __MAC_H
+N#define __MAC_H
+N
+Nint DM9000DBG_Init(void);
+Nint dm9000_send(unsigned char *data, unsigned int len);	   
+Nint DM9000DBG_GetFrame(unsigned char *data, unsigned int *len);	  
+Nint board_eth_get_addr(unsigned char *addr);
+N
+N#endif /* __MAC_H */
+L 3 "Source\tftp\dm9000dbg.c" 2
+N#include "utils.h"
+L 1 ".\INC\utils.h" 1
+N#ifndef	__UTILS_H
+N#define	__UTILS_H
+N
+Nvoid memcpy(void *s1, const void *s2, int n);
+Nvoid memset(void *s, const char ch, int n);
+Nunsigned short ntohs(unsigned short s);
+Nunsigned long ntohl(unsigned long l);
+Nunsigned short htons(unsigned short s);
+Nunsigned long htonl(unsigned long l);
+N//unsigned long strtoul(char *s);
+Nvoid ultostr(char *s, unsigned long data);
+Nunsigned long strtobcd(char *s);
+Nunsigned long strtodec(char *str, int cnt);
+Nint strlen(const char *s);
+Nint strncmp(const char *s1, const char *s2, int maxlen);
+N
+Nint getyorn(void);
+Nvoid printf(char *f, ...);
+Nvoid sprintf(char *mem, char *fmt, ...);
+N
+Nint GetParameter(char *str, int cnt);
+N
+N#endif
+L 4 "Source\tftp\dm9000dbg.c" 2
+N
+N#define DM9000_ID  0x90000A46
+N#define PACKET_TYPE_ALL_MULTICAST      0x0004
+N#define PACKET_TYPE_BROADCAST          0x0008
+N#define PACKET_TYPE_PROMISCUOUS        0x0020
+NUINT16T MacAddr[3]={0x8000,0x1248,0x5634};
+Xunsigned short MacAddr[3]={0x8000,0x1248,0x5634};
+N// Hash creation constants.
+N//
+N#define CRC_PRIME               0xFFFFFFFF;
+N#define CRC_POLYNOMIAL          0x04C11DB6;
+Nstatic UINT8T OurEmacAddr[6] = {0x00,0x00,0x32,0x12,0x33,0x12} ;
+Xstatic unsigned char OurEmacAddr[6] = {0x00,0x00,0x32,0x12,0x33,0x12} ;
+N
+N
+N#define IOREAD(o)     ((UINT8T)*((volatile UINT8T *)(o)))
+N#define IOWRITE(o, d)    *((volatile UINT8T *)(o)) = (UINT8T)(d)
+N
+N#define IOREAD16(o)     ((UINT16T)*((volatile UINT16T *)(o)))
+N#define IOWRITE16(o, d)    *((volatile UINT16T *)(o)) = (UINT16T)(d)
+N
+N#define IOREAD32(o)     ((UINT32T)*((volatile UINT32T *)(o)))
+N#define IOWRITE32(o, d)    *((volatile UINT32T *)(o)) = (UINT32T)(d)
+N
+Nstatic UINT32T dwEthernetIOBase;
+Xstatic unsigned int dwEthernetIOBase;
+Nstatic UINT32T dwEthernetDataPort;
+Xstatic unsigned int dwEthernetDataPort;
+N
+Nstatic UINT8T DM9000_iomode;
+Xstatic unsigned char DM9000_iomode;
+Nstatic UINT16T hash_table[4];
+Xstatic unsigned short hash_table[4];
+N
+N
+Nstatic UINT8T DM9000_rev; 
+Xstatic unsigned char DM9000_rev; 
+N
+N
+N#define DM9000_DWORD_MODE  1
+N#define DM9000_BYTE_MODE  2
+N#define DM9000_WORD_MODE  0
+N
+N//#define DM9000_MEM_MODE
+N#ifdef DM9000_MEM_MODE
+S
+S#define READ_REG1     ReadReg
+S#define READ_REG2     MEMREAD
+S
+S#define WRITE_REG1     WriteReg
+S#define WRITE_REG2     MEMWRITE
+S
+N#else
+N
+N#define READ_REG1     ReadReg
+N#define READ_REG2     ReadReg
+N
+N#define WRITE_REG1     WriteReg
+N#define WRITE_REG2     WriteReg
+N
+N#endif
+N
+N
+Nstatic UINT8T
+Xstatic unsigned char
+NReadReg(UINT16T offset)
+XReadReg(unsigned short offset)
+N{
+N IOWRITE(dwEthernetIOBase, offset);
+X *((volatile unsigned char *)(dwEthernetIOBase)) = (unsigned char)(offset);
+N return IOREAD(dwEthernetDataPort);
+X return ((unsigned char)*((volatile unsigned char *)(dwEthernetDataPort)));
+N}
+N
+Nstatic void
+NWriteReg(UINT16T offset, UINT8T data)
+XWriteReg(unsigned short offset, unsigned char data)
+N{
+N IOWRITE(dwEthernetIOBase, offset);
+X *((volatile unsigned char *)(dwEthernetIOBase)) = (unsigned char)(offset);
+N IOWRITE(dwEthernetDataPort, data);
+X *((volatile unsigned char *)(dwEthernetDataPort)) = (unsigned char)(data);
+N}
+N
+N
+N/*
+N    @func   UINT8T | CalculateHashIndex | Computes the logical addres filter hash index value.  This used when there are multiple
+N                                     destination addresses to be filtered.
+N    @rdesc  Hash index value.
+N    @comm   
+N    @xref  
+N*/
+NUINT8T CalculateHashIndex( UINT8T  *pMulticastAddr )
+Xunsigned char CalculateHashIndex( unsigned char  *pMulticastAddr )
+N{
+N   UINT32T CRC;
+X   unsigned int CRC;
+N   UINT8T  HashIndex;
+X   unsigned char  HashIndex;
+N   UINT8T  AddrByte;
+X   unsigned char  AddrByte;
+N   UINT32T HighBit;
+X   unsigned int HighBit;
+N   int   Byte;
+N   int   Bit;
+N
+N   // Prime the CRC.
+N   CRC = CRC_PRIME;
+X   CRC = 0xFFFFFFFF;;
+N
+N   // For each of the six bytes of the multicast address.
+N   for ( Byte=0; Byte<6; Byte++ )
+N   {
+N      AddrByte = *pMulticastAddr++;
+N
+N      // For each bit of the byte.
+N      for ( Bit=8; Bit>0; Bit-- )
+N      {
+N         HighBit = CRC >> 31;
+N         CRC <<= 1;
+N
+N         if ( HighBit ^ (AddrByte & 1) )
+N         {
+N            CRC ^= CRC_POLYNOMIAL;
+X            CRC ^= 0x04C11DB6;;
+N            CRC |= 1;
+N         }
+N
+N         AddrByte >>= 1;
+N      }
+N   }
+N
+N   // Take the least significant six bits of the CRC and copy them
+N   // to the HashIndex in reverse order.
+N   for( Bit=0,HashIndex=0; Bit<6; Bit++ )
+N   {
+N      HashIndex <<= 1;
+N      HashIndex |= (UINT8T)(CRC & 1);
+X      HashIndex |= (unsigned char)(CRC & 1);
+N      CRC >>= 1;
+N   }
+N
+N   return(HashIndex);
+N}
+N
+Nvoid DM9000_Delay(UINT32T dwCounter)
+Xvoid DM9000_Delay(unsigned int dwCounter)
+N{
+N // Simply loop...
+N while (dwCounter--);
+N} 
+N
+Nvoid dm9000_hash_table(UINT16T *mac)
+Xvoid dm9000_hash_table(unsigned short *mac)
+N{
+N UINT16T i, oft;
+X unsigned short i, oft;
+N
+N uart_printf("dm9000_hash_table\r\n");
+N /* Set Node address */
+N WRITE_REG1(0x10, (UINT8T)(mac[0] & 0xFF));
+X WriteReg(0x10, (unsigned char)(mac[0] & 0xFF));
+N WRITE_REG1(0x11, (UINT8T)(mac[0] >> 8));
+X WriteReg(0x11, (unsigned char)(mac[0] >> 8));
+N WRITE_REG1(0x12, (UINT8T)(mac[1] & 0xFF));
+X WriteReg(0x12, (unsigned char)(mac[1] & 0xFF));
+N WRITE_REG1(0x13, (UINT8T)(mac[1] >> 8));
+X WriteReg(0x13, (unsigned char)(mac[1] >> 8));
+N WRITE_REG1(0x14, (UINT8T)(mac[2] & 0xFF));
+X WriteReg(0x14, (unsigned char)(mac[2] & 0xFF));
+N WRITE_REG1(0x15, (UINT8T)(mac[2] >> 8)); 
+X WriteReg(0x15, (unsigned char)(mac[2] >> 8)); 
+N
+N /* Clear Hash Table */
+N for (i = 0; i < 4; i++)
+N  hash_table[i] = 0x0;
+N
+N /* broadcast address */
+N hash_table[3] = 0x8000;
+N /* Write the hash table to MAC MD table */
+N for (i = 0, oft = 0x16; i < 4; i++)
+N {
+N  WRITE_REG1(oft++, (UINT8T)(hash_table[i] & 0xff));
+X  WriteReg(oft++, (unsigned char)(hash_table[i] & 0xff));
+N  WRITE_REG1(oft++, (UINT8T)((hash_table[i] >> 8) & 0xff));
+X  WriteReg(oft++, (unsigned char)((hash_table[i] >> 8) & 0xff));
+N }
+N  
+N
+N}
+N
+N/*
+N * This function is used to detect DM9000 chip
+N * input : void
+N * return : TRUE, detect DM9000
+N *          FALSE, Not find DM9000
+N */
+Nstatic int Probe(void)
+N{
+N int r = FALSE;
+X int r = 0;
+N UINT32T id_val;
+X unsigned int id_val;
+N
+N
+N uart_printf("detected DM9000...\r\n"); 
+N uart_printf ( "dwEthernetIOBase =  %x\r\n",dwEthernetIOBase);
+N uart_printf ( "dwEthernetDataPort =  %x\r\n",dwEthernetDataPort);
+N 
+N id_val  = READ_REG1(0x28);
+X id_val  = ReadReg(0x28);
+N id_val |= READ_REG1(0x29) << 8;
+X id_val |= ReadReg(0x29) << 8;
+N id_val |= READ_REG1(0x2a) << 16;
+X id_val |= ReadReg(0x2a) << 16;
+N id_val |= READ_REG1(0x2b) << 24;
+X id_val |= ReadReg(0x2b) << 24;
+N
+Nuart_printf ( "id_val =  %x\r\n",id_val);
+N 
+N if (id_val == DM9000_ID) {
+X if (id_val == 0x90000A46) {
+N  uart_printf("INFO: Probe: DM9000 is detected.\r\n");
+N  DM9000_rev = READ_REG1(0x2c);
+X  DM9000_rev = ReadReg(0x2c);
+N  uart_printf("INFO:CHIP Revision is:%d\n",DM9000_rev);
+N
+N  
+N  r = TRUE;
+X  r = 1;
+N }
+N else {
+N  uart_printf("ERROR: Probe: Can not find DM9000.\r\n");
+N }
+N
+N return r;
+N}
+N
+N
+N/*
+N * This function enables TX/RX interrupt mask
+N * input : void
+N * return : viod
+N */
+Nvoid DM9000DBG_EnableInts(void)
+N{
+N /*only enable RX interrupt*/
+N WRITE_REG1(0xff, 0x81);
+X WriteReg(0xff, 0x81);
+N}
+N/*
+N * This function disables TX/RX interrupt mask
+N * input : void
+N * return void
+N */
+N
+Nvoid DM9000DBG_DisableInts(void)
+N{
+N WRITE_REG1(0xff, 0x80);
+X WriteReg(0xff, 0x80);
+N}
+N
+N/* Send a data block via Ethernet. */
+N
+N int dm9000_send (UINT8T *pbData,unsigned int length)
+X int dm9000_send (unsigned char *pbData,unsigned int length)
+N{ 
+N int i;
+N int tmplen;
+N
+N
+N IOWRITE(dwEthernetIOBase, 0xf8); /* data copy ready set */
+X *((volatile unsigned char *)(dwEthernetIOBase)) = (unsigned char)(0xf8);  
+N /* copy data to FIFO */
+N switch (DM9000_iomode)
+N {
+N  case DM9000_BYTE_MODE:
+X  case 2:
+N   tmplen = length ;  
+N   for (i = 0; i < tmplen; i++)
+N   IOWRITE(dwEthernetDataPort, ((UINT8T *)pbData)[i]);
+X   *((volatile unsigned char *)(dwEthernetDataPort)) = (unsigned char)(((unsigned char *)pbData)[i]);
+N   break;
+N  case DM9000_WORD_MODE:
+X  case 0:
+N   tmplen = (length+1)/2;
+N   for (i = 0; i < tmplen; i++)
+N           IOWRITE16(dwEthernetDataPort, ((UINT16T *)pbData)[i]);
+X           *((volatile unsigned short *)(dwEthernetDataPort)) = (unsigned short)(((unsigned short *)pbData)[i]);
+N   break;
+N  case DM9000_DWORD_MODE:
+X  case 1:
+N   tmplen = (length+3)/4;
+N   for (i = 0; i < tmplen; i++)
+N           IOWRITE32(dwEthernetDataPort, ((UINT32T *)pbData)[i]);
+X           *((volatile unsigned int *)(dwEthernetDataPort)) = (unsigned int)(((unsigned int *)pbData)[i]);
+N  default:
+N   uart_printf("[DM9000][TX]Move data error!!!");
+N   break;
+N }
+N /*set packet leng */
+N WRITE_REG1(0xfd, (length >> 8) & 0xff); 
+X WriteReg(0xfd, (length >> 8) & 0xff); 
+N WRITE_REG1(0xfc, length & 0xff);
+X WriteReg(0xfc, length & 0xff);
+N /* start transmit */
+N WRITE_REG1(0x02, 1);
+X WriteReg(0x02, 1);
+N 
+N /*wait TX complete*/
+N while(1)
+N {
+N  if (READ_REG1(0xfe) & 2) { //TX completed
+X  if (ReadReg(0xfe) & 2) { 
+N   WRITE_REG1(0xfe, 2);
+X   WriteReg(0xfe, 2);
+N   break;
+N  }
+N  DM9000_Delay(1000);
+N }
+N return 0;
+N}
+N
+N/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+N/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+N/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+N/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+N
+Nint DM9000DBG_Init(void )
+N{
+N
+N    int r = FALSE;
+X    int r = 0;
+N	UINT32T temp;
+X	unsigned int temp;
+N	// Core DM9000
+N
+N	dwEthernetIOBase   = 0x20000000;
+N	dwEthernetDataPort = 0x20100000;
+N   
+N     r = Probe(); /*Detect DM9000 */
+N
+N	 
+N    MacAddr[0] = 0x0000;
+N	MacAddr[1] = 0x1232;
+N	MacAddr[2] = 0x1233;
+N    uart_printf("DM9000: MAC Address: %u:%u:%u:%u:%u:%u\r\n",
+N    MacAddr[0] & 0x00FF, MacAddr[0] >> 8,
+N    MacAddr[1] & 0x00FF, MacAddr[1] >> 8,
+N    MacAddr[2] & 0x00FF, MacAddr[2] >> 8);
+N
+N	if(r == FALSE)
+X	if(r == 0)
+N	{
+N	    return FALSE; 
+X	    return 0; 
+N	}
+N
+N	 /* set the internal PHY power-on, GPIOs normal */
+N	 WRITE_REG1(0x1f, 0); /* GPR (reg_1Fh)bit GPIO0=0 pre-activate PHY */ 
+X	 WriteReg(0x1f, 0);   
+N	 DM9000_Delay(1000);
+N
+N	 /* do a software reset */
+N	 WRITE_REG1(0x0, 3); /* NCR (reg_00h) bit[0] RST=1 & Loopback=1, reset on */
+X	 WriteReg(0x0, 3);  
+N	 DM9000_Delay(1000);
+N	 WRITE_REG1(0x0, 3); /* NCR (reg_00h) bit[0] RST=1 & Loopback=1, reset on */ 
+X	 WriteReg(0x0, 3);   
+N	 DM9000_Delay(1000);
+N
+N	 /* I/O mode */
+N	 DM9000_iomode = READ_REG1(0xfe) >> 6; /* ISR bit7:6 keeps I/O mode */
+X	 DM9000_iomode = ReadReg(0xfe) >> 6;  
+N
+N	 /* Program operating register */
+N	 WRITE_REG1(0x0, 0);
+X	 WriteReg(0x0, 0);
+N	 WRITE_REG1(0x02, 0); /* TX Polling clear */
+X	 WriteReg(0x02, 0);  
+N	 WRITE_REG1(0x2f, 0); /* Special Mode */
+X	 WriteReg(0x2f, 0);  
+N	 WRITE_REG1(0x01, 0x2c); /* clear TX status */
+X	 WriteReg(0x01, 0x2c);  
+N	 WRITE_REG1(0xfe, 0x0f); /* Clear interrupt status */
+X	 WriteReg(0xfe, 0x0f);  
+N
+N	 /* Set address filter table */
+N	 dm9000_hash_table(MacAddr);
+N
+N	 /* Activate DM9000A/DM9010 */
+N	 WRITE_REG1(0x05, 0x30 | 1); /* Discard long packet and CRC error packets*//* RX enable */     
+X	 WriteReg(0x05, 0x30 | 1);        
+N	 WRITE_REG1(0xff, 0x80);  /* Enable SRAM automatically return */
+X	 WriteReg(0xff, 0x80);   
+N	    
+N	 /* wait link ok */
+N	 
+N
+N	 while(1)
+N	 {
+N	         temp=READ_REG1(0x01)&0x40;
+X	         temp=ReadReg(0x01)&0x40;
+N	         if(temp)
+N	         	{
+N	         uart_printf ("link stauts = %x\r\n", READ_REG1(0x01));
+X	         uart_printf ("link stauts = %x\r\n", ReadReg(0x01));
+N	         uart_printf("INFO: Init: DM9000_Init OK.\r\n");
+N	            break;	
+N	         	}
+N		//uart_printf("wait for Ethernet link ...\r\n");
+N	 }   
+N
+N	 return r;
+N}
+N
+N//----------------------------------------------------------------------
+N
+NUINT32T
+Xunsigned int
+NDM9000DBG_GetPendingInts(void)
+N{
+N UINT8T intr_state;
+X unsigned char intr_state;
+N 
+N intr_state = READ_REG1(0xfe);
+X intr_state = ReadReg(0xfe);
+N WRITE_REG1(0xfe, intr_state); /*clean ISR*/
+X WriteReg(0xfe, intr_state);  
+N return(1);
+N
+N}
+N
+N
+N/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+N/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+Nint DM9000DBG_GetFrame(UINT8T *pbData,  unsigned int *pwLength)
+Xint DM9000DBG_GetFrame(unsigned char *pbData,  unsigned int *pwLength)
+N{
+N 
+N int i;
+N unsigned long tmp32;
+N unsigned short rxlen, tmplen;
+N unsigned short status;
+N UINT8T RxRead;
+X unsigned char RxRead;
+N
+N RxRead=READ_REG1(0xFE);
+X RxRead=ReadReg(0xFE);
+N if(RxRead&0x01==0) return -1;
+N
+N READ_REG1(0x3); 
+X ReadReg(0x3); 
+N
+N READ_REG1(0x4);  /*Try & work run*/
+X ReadReg(0x4);   
+N 
+N /* read the first byte*/
+N RxRead = READ_REG1(0xf0);
+X RxRead = ReadReg(0xf0);
+N RxRead = IOREAD(dwEthernetDataPort);
+X RxRead = ((unsigned char)*((volatile unsigned char *)(dwEthernetDataPort)));
+N RxRead = IOREAD(dwEthernetDataPort);
+X RxRead = ((unsigned char)*((volatile unsigned char *)(dwEthernetDataPort)));
+N
+N /* the fist byte is ready or not */
+N if ((RxRead & 3) != 1)  /* no data */
+N 	{
+N    return -1;
+N	}																			    
+N IOWRITE(dwEthernetIOBase, 0xf2); /* set read ptr ++ */
+X *((volatile unsigned char *)(dwEthernetIOBase)) = (unsigned char)(0xf2);  
+N switch (DM9000_iomode)
+N {
+N  case DM9000_BYTE_MODE:
+X  case 2:
+N   status = IOREAD(dwEthernetDataPort)+(IOREAD(dwEthernetDataPort)<<8);
+X   status = ((unsigned char)*((volatile unsigned char *)(dwEthernetDataPort)))+(((unsigned char)*((volatile unsigned char *)(dwEthernetDataPort)))<<8);
+N   rxlen = IOREAD(dwEthernetDataPort) + (IOREAD(dwEthernetDataPort)<<8);
+X   rxlen = ((unsigned char)*((volatile unsigned char *)(dwEthernetDataPort))) + (((unsigned char)*((volatile unsigned char *)(dwEthernetDataPort)))<<8);
+N   break;
+N  case DM9000_WORD_MODE:
+X  case 0:
+N   status = IOREAD16(dwEthernetDataPort);  
+X   status = ((unsigned short)*((volatile unsigned short *)(dwEthernetDataPort)));  
+N   rxlen = IOREAD16(dwEthernetDataPort);  
+X   rxlen = ((unsigned short)*((volatile unsigned short *)(dwEthernetDataPort)));  
+N   break;
+N  case DM9000_DWORD_MODE:
+X  case 1:
+N   tmp32 = IOREAD32(dwEthernetDataPort);
+X   tmp32 = ((unsigned int)*((volatile unsigned int *)(dwEthernetDataPort)));
+N   status = (unsigned short)(tmp32&0xffff);
+N   rxlen = (unsigned short)((tmp32>>16)&0xffff);
+N  default:
+N   uart_printf("[DM9000]Get status and rxlen error!!!");
+N   break;
+N }  
+N
+N if (status & 0xbf00)
+N  uart_printf("[DM9000]RX status error!!!=[%x]",(status>>8) );
+N
+N /* move data from FIFO to memory */
+N switch (DM9000_iomode)
+N {
+N  case DM9000_BYTE_MODE:
+X  case 2:
+N   tmplen = rxlen ;
+N   for (i = 0; i < tmplen; i++)
+N    ((UINT8T *)pbData)[i] = IOREAD(dwEthernetDataPort);
+X    ((unsigned char *)pbData)[i] = ((unsigned char)*((volatile unsigned char *)(dwEthernetDataPort)));
+N   break;
+N  case DM9000_WORD_MODE:
+X  case 0:
+N   tmplen = (rxlen+1)/2;
+N   for (i = 0; i < tmplen; i++)
+N    ((UINT16T *)pbData)[i] = IOREAD16(dwEthernetDataPort);
+X    ((unsigned short *)pbData)[i] = ((unsigned short)*((volatile unsigned short *)(dwEthernetDataPort)));
+N   break;
+N  case DM9000_DWORD_MODE:
+X  case 1:
+N   tmplen = (rxlen+3)/4;
+N   for (i = 0; i < tmplen; i++)
+N    ((UINT32T *)pbData)[i] = IOREAD32(dwEthernetDataPort);
+X    ((unsigned int *)pbData)[i] = ((unsigned int)*((volatile unsigned int *)(dwEthernetDataPort)));
+N  default:
+N   uart_printf("[DM9000][RX]Move data error!!!");
+N   break;
+N }
+N
+N *pwLength = rxlen;
+N /* clean ISR */
+N WRITE_REG1(0xfe,READ_REG1(0xfe));
+X WriteReg(0xfe,ReadReg(0xfe));
+N return rxlen; 
+N}
+N
+N
+N
+N/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+N/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+NUINT16T DM9000DBG_SendFrame( UINT8T *pbData, UINT32T dwLength )
+Xunsigned short DM9000DBG_SendFrame( unsigned char *pbData, unsigned int dwLength )
+N{
+N// uart_printf("[DM9000A]: DM9000DBG_SendFrame()..........\r\n");
+N return dm9000_send(pbData, (UINT16T)dwLength);
+X return dm9000_send(pbData, (unsigned short)dwLength);
+N}
+N
+N
+N/*
+N    @func   void | DM9000DBG_CurrentPacketFilter | Sets a receive packet h/w filter.
+N    @rdesc  N/A.
+N    @comm   
+N    @xref  
+N*/
+Nvoid DM9000DBG_CurrentPacketFilter(UINT32T dwFilter)
+Xvoid DM9000DBG_CurrentPacketFilter(unsigned int dwFilter)
+N{
+N UINT8T uTemp;
+X unsigned char uTemp;
+N UINT16T i, oft;
+X unsigned short i, oft;
+N
+N uart_printf("[DM9000A]: DM9000DBG_CurrentPacketFilter()..........\r\n");  
+N // What kind of filtering do we want to apply?
+N //
+N // NOTE: the filter provided might be 0, but since this EDBG driver is used for KITL, we don't want
+N // to stifle the KITL connection, so broadcast and directed packets should always be accepted.
+N //
+N if (dwFilter & PACKET_TYPE_ALL_MULTICAST)
+X if (dwFilter & 0x0004)
+N { // Accept *all* multicast packets.
+N  uTemp = READ_REG1(0x05);
+X  uTemp = ReadReg(0x05);
+N  WRITE_REG1(0x05, uTemp | 0x08);  //Enable pass all multicast
+X  WriteReg(0x05, uTemp | 0x08);  
+N }
+N
+N#if 0  //Always can receive multicast address according to hash table.
+S if (dwFilter & PACKET_TYPE_MULTICAST)
+S { // Accept multicast packets.
+S  
+S }
+N#endif
+N
+N if (dwFilter & PACKET_TYPE_BROADCAST)
+X if (dwFilter & 0x0008)
+N {
+N  /* broadcast address */
+N  hash_table[3] = 0x8000;
+N  /* Write the hash table to MAC MD table */
+N  for (i = 0, oft = 0x16; i < 4; i++) {
+N   WRITE_REG1(oft++, hash_table[i] & 0xff);
+X   WriteReg(oft++, hash_table[i] & 0xff);
+N   WRITE_REG1(oft++, (hash_table[i] >> 8) & 0xff);
+X   WriteReg(oft++, (hash_table[i] >> 8) & 0xff);
+N  }
+N  
+N }
+N 
+N // Promiscuous mode is causing random hangs - it's not strictly needed.
+N if (dwFilter & PACKET_TYPE_PROMISCUOUS)
+X if (dwFilter & 0x0020)
+N { // Accept anything.
+N  uTemp = READ_REG1(0x05);
+X  uTemp = ReadReg(0x05);
+N  WRITE_REG1(0x05, uTemp | 0x02);  //Enable pass all multicast
+X  WriteReg(0x05, uTemp | 0x02);  
+N }
+N
+N    uart_printf("DM9000: Set receive packet filter [Filter=0x%x].\r\n", dwFilter);
+N
+N
+N} // DM9000DBG_CurrentPacketFilter().
+N
+N
+N/*
+N    @func   int | DM9000DBG_MulticastList | Sets a multicast address filter list.
+N    @rdesc  TRUE = Success, FALSE = Failure.
+N    @comm   
+N    @xref  
+N*/
+Nint DM9000DBG_MulticastList(UINT8T *pucMulticastAddresses, UINT32T dwNumAddresses)
+Xint DM9000DBG_MulticastList(unsigned char *pucMulticastAddresses, unsigned int dwNumAddresses)
+N{
+N UINT8T nCount;
+X unsigned char nCount;
+N UINT8T nIndex;
+X unsigned char nIndex;
+N UINT8T i, oft;
+X unsigned char i, oft;
+N UINT8T Reg5;
+X unsigned char Reg5;
+N
+N //Stop RX
+N Reg5 = READ_REG1(0x05);
+X Reg5 = ReadReg(0x05);
+N WRITE_REG1(0x05, Reg5 & 0xfe);
+X WriteReg(0x05, Reg5 & 0xfe);
+N
+N // Compute the logical address filter value.
+N //
+N for (nCount = 0 ; nCount < dwNumAddresses ; nCount++)
+N {
+N         uart_printf("DM9000: Multicast[%d of %d]  = %x-%x-%x-%x-%x-%x\r\n",
+N                             (nCount + 1),
+N        dwNumAddresses,
+N                             pucMulticastAddresses[6*nCount + 0],
+N                             pucMulticastAddresses[6*nCount + 1],
+N                             pucMulticastAddresses[6*nCount + 2],
+N                             pucMulticastAddresses[6*nCount + 3],
+N                             pucMulticastAddresses[6*nCount + 4],
+N                             pucMulticastAddresses[6*nCount + 5]);
+N
+N  nIndex = CalculateHashIndex(&pucMulticastAddresses[6*nCount]);
+N         hash_table[nIndex/16]  |=  1 << (nIndex%16);
+N }
+N
+N uart_printf("DM9000: Logical Address Filter = %x.%x.%x.%x.\r\n", hash_table[3], hash_table[2], hash_table[1], hash_table[0]);
+N 
+N /* Write the hash table to MAC MD table */
+N for (i = 0, oft = 0x16; i < 4; i++) {
+N  WRITE_REG1(oft++, hash_table[i] & 0xff);
+X  WriteReg(oft++, hash_table[i] & 0xff);
+N  WRITE_REG1(oft++, (hash_table[i] >> 8) & 0xff);
+X  WriteReg(oft++, (hash_table[i] >> 8) & 0xff);
+N }
+N
+N //Start RX
+N WRITE_REG1(0x05, Reg5);
+X WriteReg(0x05, Reg5);
+N 
+N    return(TRUE);
+X    return(1);
+N
+N} // DM9000DBG_MulticastList
+N
+N int board_eth_get_addr(unsigned char *addr)
+N{
+N	memcpy(addr, OurEmacAddr, 6);
+N	return 0;
+N}

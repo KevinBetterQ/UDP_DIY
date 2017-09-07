@@ -1,0 +1,393 @@
+L 1 "Source\tftp\arp.c"
+N
+N#include "skbuff.h"
+L 1 ".\INC\tftp\skbuff.h" 1
+N#ifndef __SKBUFF_H
+N#define __SKBUFF_H
+N
+N#include "eth.h"
+L 1 ".\INC\tftp\eth.h" 1
+N#ifndef __ETH_H
+N#define __ETH_H
+N
+N/*
+N *	IEEE 802.3 Ethernet magic constants.  The frame sizes omit the preamble
+N *	and FCS/CRC (frame check sequence). 
+N */
+N
+N#define ETH_ALEN	6		/* Octets in one ethernet addr	 */
+N#define ETH_HLEN	14		/* Total octets in header.	 */
+N#define ETH_ZLEN	60		/* Min. octets in frame sans FCS */
+N#define ETH_DATA_LEN	1500		/* Max. octets in payload	 */
+N#define ETH_FRAME_LEN	1514		/* Max. octets in frame sans FCS */
+N
+N/*
+N *	These are the defined Ethernet Protocol ID's.
+N */
+N
+N#define ETH_P_LOOP	0x0060		/* Ethernet Loopback packet	*/
+N#define ETH_P_ECHO	0x0200		/* Ethernet Echo packet		*/
+N#define ETH_P_PUP	0x0400		/* Xerox PUP packet		*/
+N#define ETH_P_IP	0x0800		/* Internet Protocol packet	*/
+N#define ETH_P_X25	0x0805		/* CCITT X.25			*/
+N#define ETH_P_ARP	0x0806		/* Address Resolution packet	*/
+N#define	ETH_P_BPQ	0x08FF		/* G8BPQ AX.25 Ethernet Packet	[ NOT AN OFFICIALLY REGISTERED ID ] */
+N#define ETH_P_DEC       0x6000          /* DEC Assigned proto           */
+N#define ETH_P_DNA_DL    0x6001          /* DEC DNA Dump/Load            */
+N#define ETH_P_DNA_RC    0x6002          /* DEC DNA Remote Console       */
+N#define ETH_P_DNA_RT    0x6003          /* DEC DNA Routing              */
+N#define ETH_P_LAT       0x6004          /* DEC LAT                      */
+N#define ETH_P_DIAG      0x6005          /* DEC Diagnostics              */
+N#define ETH_P_CUST      0x6006          /* DEC Customer use             */
+N#define ETH_P_SCA       0x6007          /* DEC Systems Comms Arch       */
+N#define ETH_P_RARP      0x8035		/* Reverse Addr Res packet	*/
+N#define ETH_P_ATALK	0x809B		/* Appletalk DDP		*/
+N#define ETH_P_AARP	0x80F3		/* Appletalk AARP		*/
+N#define ETH_P_IPX	0x8137		/* IPX over DIX			*/
+N#define ETH_P_IPV6	0x86DD		/* IPv6 over bluebook		*/
+N
+N
+N/*
+N *	This is an Ethernet frame header.
+N */
+N 
+N__packed struct ethhdr
+N{
+N	unsigned char	h_dest[ETH_ALEN];	/* destination eth addr	*/
+X	unsigned char	h_dest[6];	 
+N	unsigned char	h_source[ETH_ALEN];	/* source ether addr	*/
+X	unsigned char	h_source[6];	 
+N	unsigned short	h_proto;		/* packet type ID field	*/
+N};
+N
+Nstruct sk_buff;
+N
+Nint eth_init(void);
+Nint eth_lnk_stat(void);
+Nint eth_send(struct sk_buff *skb, unsigned char *dest_addr, unsigned short proto);
+Nint eth_rcv(struct sk_buff *skb);
+Nint eth_get_addr(unsigned char *addr);
+Nvoid eth_skb_reserve(struct sk_buff *skb);
+N
+N
+N#endif /* __ETH_H */
+L 5 ".\INC\tftp\skbuff.h" 2
+N
+Nstruct sk_buff {
+N
+N	unsigned char pad[2];
+N	unsigned char buf[ETH_FRAME_LEN];
+X	unsigned char buf[1514];
+N	unsigned int truesize;			/* Buffer size 					*/
+N
+N	unsigned char *data;			/* Data head pointer				*/
+N	unsigned int len;			/* Length of actual data			*/
+N};
+N
+Nint skb_init(void);
+Nstruct sk_buff *alloc_skb(unsigned int size);
+Nvoid free_skb(struct sk_buff *skb);
+Nunsigned char *skb_put(struct sk_buff *skb, unsigned int len);
+Nunsigned char *skb_push(struct sk_buff *skb, unsigned int len);
+Nunsigned char *skb_pull(struct sk_buff *skb, unsigned int len);
+Nvoid skb_reserve(struct sk_buff *skb, unsigned int len);
+N
+N#endif	/* __SKBUFF_H */
+L 3 "Source\tftp\arp.c" 2
+N#include "eth.h"
+N#include "arp.h"
+L 1 ".\INC\tftp\arp.h" 1
+N#ifndef __ARP_H
+N#define __ARP_H
+N
+N#include "eth.h"
+N
+N/* ARP protocol HARDWARE identifiers. */
+N#define ARPHRD_NETROM	0		/* from KA9Q: NET/ROM pseudo	*/
+N#define ARPHRD_ETHER 	1		/* Ethernet 10Mbps		*/
+N#define	ARPHRD_EETHER	2		/* Experimental Ethernet	*/
+N#define	ARPHRD_AX25	3		/* AX.25 Level 2		*/
+N#define	ARPHRD_PRONET	4		/* PROnet token ring		*/
+N#define	ARPHRD_CHAOS	5		/* Chaosnet			*/
+N#define	ARPHRD_IEEE802	6		/* IEEE 802.2 Ethernet/TR/TB	*/
+N#define	ARPHRD_ARCNET	7		/* ARCnet			*/
+N#define	ARPHRD_APPLETLK	8		/* APPLEtalk			*/
+N#define ARPHRD_DLCI	15		/* Frame Relay DLCI		*/
+N#define ARPHRD_ATM	19		/* ATM 				*/
+N#define ARPHRD_METRICOM	23		/* Metricom STRIP (new IANA id)	*/
+N#define	ARPHRD_IEEE1394	24		/* IEEE 1394 IPv4 - RFC 2734	*/
+N#define ARPHRD_EUI64	27		/* EUI-64                       */
+N
+N/* Dummy types for non ARP hardware */
+N#define ARPHRD_SLIP	256
+N#define ARPHRD_CSLIP	257
+N#define ARPHRD_SLIP6	258
+N#define ARPHRD_CSLIP6	259
+N#define ARPHRD_RSRVD	260		/* Notional KISS type 		*/
+N#define ARPHRD_ADAPT	264
+N#define ARPHRD_ROSE	270
+N#define ARPHRD_X25	271		/* CCITT X.25			*/
+N#define ARPHRD_HWX25	272		/* Boards with X.25 in firmware	*/
+N#define ARPHRD_PPP	512
+N#define ARPHRD_CISCO	513		/* Cisco HDLC	 		*/
+N#define ARPHRD_HDLC	ARPHRD_CISCO
+N#define ARPHRD_LAPB	516		/* LAPB				*/
+N#define ARPHRD_DDCMP    517		/* Digital's DDCMP protocol     */
+N#define ARPHRD_RAWHDLC	518		/* Raw HDLC			*/
+N
+N#define ARPHRD_TUNNEL	768		/* IPIP tunnel			*/
+N#define ARPHRD_TUNNEL6	769		/* IPIP6 tunnel			*/
+N#define ARPHRD_FRAD	770             /* Frame Relay Access Device    */
+N#define ARPHRD_SKIP	771		/* SKIP vif			*/
+N#define ARPHRD_LOOPBACK	772		/* Loopback device		*/
+N#define ARPHRD_LOCALTLK 773		/* Localtalk device		*/
+N#define ARPHRD_FDDI	774		/* Fiber Distributed Data Interface */
+N#define ARPHRD_BIF      775             /* AP1000 BIF                   */
+N#define ARPHRD_SIT	776		/* sit0 device - IPv6-in-IPv4	*/
+N#define ARPHRD_IPDDP	777		/* IP over DDP tunneller	*/
+N#define ARPHRD_IPGRE	778		/* GRE over IP			*/
+N#define ARPHRD_PIMREG	779		/* PIMSM register interface	*/
+N#define ARPHRD_HIPPI	780		/* High Performance Parallel Interface */
+N#define ARPHRD_ASH	781		/* Nexus 64Mbps Ash		*/
+N#define ARPHRD_ECONET	782		/* Acorn Econet			*/
+N#define ARPHRD_IRDA 	783		/* Linux-IrDA			*/
+N/* ARP works differently on different FC media .. so  */
+N#define ARPHRD_FCPP	784		/* Point to point fibrechannel	*/
+N#define ARPHRD_FCAL	785		/* Fibrechannel arbitrated loop */
+N#define ARPHRD_FCPL	786		/* Fibrechannel public loop	*/
+N#define ARPHRD_FCFABRIC	787		/* Fibrechannel fabric		*/
+N	/* 787->799 reserved for fibrechannel media types */
+N#define ARPHRD_IEEE802_TR 800		/* Magic type ident for TR	*/
+N#define ARPHRD_IEEE80211 801		/* IEEE 802.11			*/
+N
+N#define ARPHRD_VOID	  0xFFFF	/* Void type, nothing is known */
+N
+N/* ARP protocol opcodes. */
+N#define	ARPOP_REQUEST	1		/* ARP request			*/
+N#define	ARPOP_REPLY	2		/* ARP reply			*/
+N#define	ARPOP_RREQUEST	3		/* RARP request			*/
+N#define	ARPOP_RREPLY	4		/* RARP reply			*/
+N#define	ARPOP_InREQUEST	8		/* InARP request		*/
+N#define	ARPOP_InREPLY	9		/* InARP reply			*/
+N#define	ARPOP_NAK	10		/* (ATM)ARP NAK			*/
+N
+N/*
+N *	This structure defines an ethernet arp header.
+N */
+N
+N__packed struct arphdr
+N{
+N	unsigned short	ar_hrd;		/* format of hardware address	*/
+N	unsigned short	ar_pro;		/* format of protocol address	*/
+N	unsigned char	ar_hln;		/* length of hardware address	*/
+N	unsigned char	ar_pln;		/* length of protocol address	*/
+N	unsigned short	ar_op;		/* ARP opcode (command)		*/
+N
+N	 /*
+N	  *	 Ethernet looks like this : This bit is variable sized however...
+N	  */
+N	unsigned char	ar_sha[ETH_ALEN];	/* sender hardware address	*/
+X	unsigned char	ar_sha[6];	 
+N	unsigned long	ar_sip;			/* sender IP address		*/
+N	unsigned char	ar_tha[ETH_ALEN];	/* target hardware address	*/
+X	unsigned char	ar_tha[6];	 
+N	unsigned long	ar_tip;			/* target IP address		*/
+N};
+N
+Nint arp_init(void);
+Nint arp_add_entry(unsigned char *ha, unsigned long ip);
+Nint arp_get_eth_addr(unsigned long ip, unsigned char *ha);
+Nint arp_rcv_packet(struct sk_buff *skb);
+N
+N#endif /* __ARP_H */
+L 5 "Source\tftp\arp.c" 2
+N#include "utils.h"
+L 1 ".\INC\utils.h" 1
+N#ifndef	__UTILS_H
+N#define	__UTILS_H
+N
+Nvoid memcpy(void *s1, const void *s2, int n);
+Nvoid memset(void *s, const char ch, int n);
+Nunsigned short ntohs(unsigned short s);
+Nunsigned long ntohl(unsigned long l);
+Nunsigned short htons(unsigned short s);
+Nunsigned long htonl(unsigned long l);
+N//unsigned long strtoul(char *s);
+Nvoid ultostr(char *s, unsigned long data);
+Nunsigned long strtobcd(char *s);
+Nunsigned long strtodec(char *str, int cnt);
+Nint strlen(const char *s);
+Nint strncmp(const char *s1, const char *s2, int maxlen);
+N
+Nint getyorn(void);
+Nvoid printf(char *f, ...);
+Nvoid sprintf(char *mem, char *fmt, ...);
+N
+Nint GetParameter(char *str, int cnt);
+N
+N#endif
+L 6 "Source\tftp\arp.c" 2
+N
+N#define ARP_CACHE_SIZE   16
+N
+Ntypedef struct arp_entry {
+N	unsigned char ar_ha[ETH_ALEN];
+X	unsigned char ar_ha[6];
+N	unsigned long ar_ip;
+N} arp_entry;
+N
+Nstatic arp_entry arp_entrys;
+Nstatic arp_entry arp_cache[ARP_CACHE_SIZE];
+Xstatic arp_entry arp_cache[16];
+Nstatic int arp_chche_cur = 0;
+N
+Nint arp_init(void)
+N{
+N	memset(&arp_entrys, 0, sizeof(arp_entry));
+N	memset(arp_cache, 0, sizeof(arp_entry) * ARP_CACHE_SIZE);
+X	memset(arp_cache, 0, sizeof(arp_entry) * 16);
+N
+N	return 0;
+N}
+N
+Nint arp_add_entry(unsigned char *ha, unsigned long ip)
+N{
+N	memcpy(arp_entrys.ar_ha, ha, ETH_ALEN);
+X	memcpy(arp_entrys.ar_ha, ha, 6);
+N	arp_entrys.ar_ip = htonl(ip);
+N
+N	return 0;
+N}
+N
+Nint arp_add_cache(unsigned char *ha, unsigned long ip)
+N{
+N	int i;
+N
+N	for (i = 0; i < ARP_CACHE_SIZE; i++) {
+X	for (i = 0; i < 16; i++) {
+N		if (ip == arp_cache[i].ar_ip)
+N			break;
+N	}
+N
+N	if (i == ARP_CACHE_SIZE) {
+X	if (i == 16) {
+N		i = arp_chche_cur;
+N//		arp_chche_cur = (arp_chche_cur + 1) % ARP_CACHE_SIZE;
+N		arp_chche_cur++;
+N		if(arp_chche_cur>=ARP_CACHE_SIZE)
+X		if(arp_chche_cur>=16)
+N			arp_chche_cur = 0;
+N	}
+N
+N	memcpy(arp_cache[i].ar_ha, ha, ETH_ALEN);
+X	memcpy(arp_cache[i].ar_ha, ha, 6);
+N	arp_cache[i].ar_ip = ip;
+N
+N	return 0;
+N}
+N
+Nint arp_send_req(unsigned long ip)
+N{
+N	struct sk_buff *skb;
+N	struct arphdr *arp_req;	
+N	unsigned char broadcast[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};	
+X	unsigned char broadcast[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};	
+N
+N	skb = alloc_skb(ETH_HLEN + sizeof(struct arphdr));
+X	skb = alloc_skb(14 + sizeof(struct arphdr));
+N	eth_skb_reserve(skb);
+N	arp_req = (struct arphdr *)skb_put(skb, sizeof(struct arphdr));
+N
+N	arp_req->ar_hrd = htons(ARPHRD_ETHER);
+X	arp_req->ar_hrd = htons(1);
+N	arp_req->ar_pro = htons(ETH_P_IP);
+X	arp_req->ar_pro = htons(0x0800);
+N	arp_req->ar_hln = 0x06;
+N	arp_req->ar_pln = 0x04;
+N	arp_req->ar_op = htons(ARPOP_REQUEST);	
+X	arp_req->ar_op = htons(1);	
+N	memcpy((unsigned char *)arp_req->ar_sha, arp_entrys.ar_ha, ETH_ALEN);
+X	memcpy((unsigned char *)arp_req->ar_sha, arp_entrys.ar_ha, 6);
+N	arp_req->ar_sip = arp_entrys.ar_ip;	
+N	memset((unsigned char *)arp_req->ar_tha, 0x00, ETH_ALEN);
+X	memset((unsigned char *)arp_req->ar_tha, 0x00, 6);
+N	arp_req->ar_tip = htonl(ip);
+N
+N	eth_send(skb, broadcast, ETH_P_ARP);
+X	eth_send(skb, broadcast, 0x0806);
+N
+N	return 0;
+N}
+N
+Nint arp_send_rsp(struct arphdr *arp_hdr)
+N{
+N	struct sk_buff *skb;
+N	struct arphdr *arp_rsp;	
+N	
+N	skb = alloc_skb(ETH_HLEN + sizeof(struct arphdr));
+X	skb = alloc_skb(14 + sizeof(struct arphdr));
+N	eth_skb_reserve(skb);
+N	arp_rsp = (struct arphdr *)skb_put(skb, sizeof(struct arphdr));
+N
+N	arp_rsp->ar_hrd = htons(ARPHRD_ETHER);
+X	arp_rsp->ar_hrd = htons(1);
+N	arp_rsp->ar_pro = htons(ETH_P_IP);
+X	arp_rsp->ar_pro = htons(0x0800);
+N	arp_rsp->ar_hln = 0x06;
+N	arp_rsp->ar_pln = 0x04;
+N	arp_rsp->ar_op = htons(ARPOP_REPLY);
+X	arp_rsp->ar_op = htons(2);
+N	memcpy((unsigned char *)arp_rsp->ar_sha, arp_entrys.ar_ha, ETH_ALEN);
+X	memcpy((unsigned char *)arp_rsp->ar_sha, arp_entrys.ar_ha, 6);
+N	arp_rsp->ar_sip = arp_hdr->ar_tip;
+N	memcpy((unsigned char *)arp_rsp->ar_tha, (unsigned char *)arp_hdr->ar_sha, ETH_ALEN);
+X	memcpy((unsigned char *)arp_rsp->ar_tha, (unsigned char *)arp_hdr->ar_sha, 6);
+N	arp_rsp->ar_tip = arp_hdr->ar_sip;
+N
+N	eth_send(skb, arp_hdr->ar_sha, ETH_P_ARP);
+X	eth_send(skb, arp_hdr->ar_sha, 0x0806);
+N
+N	return 0;
+N}
+N
+Nint arp_get_eth_addr(unsigned long ip, unsigned char *ha)
+N{
+N	int i;
+N
+N	for (i = 0; i < ARP_CACHE_SIZE; i++) {
+X	for (i = 0; i < 16; i++) {
+N		if (htonl(ip) == arp_cache[i].ar_ip) {
+N			memcpy(ha, arp_cache[i].ar_ha, ETH_ALEN);
+X			memcpy(ha, arp_cache[i].ar_ha, 6);
+N			break;
+N		}
+N	}
+N
+N	if (i == ARP_CACHE_SIZE) {
+X	if (i == 16) {
+N		arp_send_req(ip);
+N		return -1;
+N	}
+N
+N	return 0;
+N}
+N
+Nint arp_rcv_packet(struct sk_buff *skb)
+N{
+N	struct arphdr *arp_hdr = (struct arphdr *)(skb->data);
+N
+N	if (arp_hdr->ar_tip != arp_entrys.ar_ip)
+N	{
+N		return 0;
+N	}
+N	if (arp_hdr->ar_op == htons(ARPOP_REQUEST))
+X	if (arp_hdr->ar_op == htons(1))
+N	{
+N		arp_send_rsp(arp_hdr);
+N	}
+N	arp_add_cache(arp_hdr->ar_sha, arp_hdr->ar_sip);
+N
+N	return 1;
+N}
+N
+N

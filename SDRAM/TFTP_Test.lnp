@@ -1,0 +1,5 @@
+--cpu ARM920T ".\sdram\s3c2410a.o" ".\sdram\main.o" ".\sdram\arp.o" ".\sdram\dm9000dbg.o" ".\sdram\eth.o" ".\sdram\icmp.o" ".\sdram\ip.o" ".\sdram\skbuff.o" ".\sdram\tftp.o" ".\sdram\tftpmain.o" ".\sdram\tftpput.o" ".\sdram\udp.o" ".\sdram\2410lib.o" ".\sdram\sys_init.o" 
+--strict --scatter ".\SDRAM\TFTP_Test.sct" 
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\SDRAM\TFTP_Test.map" -o .\SDRAM\TFTP_Test.axf

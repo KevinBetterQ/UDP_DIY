@@ -1,0 +1,177 @@
+L 1 "Source\tftp\eth.c"
+N
+N#include "skbuff.h"
+L 1 ".\INC\tftp\skbuff.h" 1
+N#ifndef __SKBUFF_H
+N#define __SKBUFF_H
+N
+N#include "eth.h"
+L 1 ".\INC\tftp\eth.h" 1
+N#ifndef __ETH_H
+N#define __ETH_H
+N
+N/*
+N *	IEEE 802.3 Ethernet magic constants.  The frame sizes omit the preamble
+N *	and FCS/CRC (frame check sequence). 
+N */
+N
+N#define ETH_ALEN	6		/* Octets in one ethernet addr	 */
+N#define ETH_HLEN	14		/* Total octets in header.	 */
+N#define ETH_ZLEN	60		/* Min. octets in frame sans FCS */
+N#define ETH_DATA_LEN	1500		/* Max. octets in payload	 */
+N#define ETH_FRAME_LEN	1514		/* Max. octets in frame sans FCS */
+N
+N/*
+N *	These are the defined Ethernet Protocol ID's.
+N */
+N
+N#define ETH_P_LOOP	0x0060		/* Ethernet Loopback packet	*/
+N#define ETH_P_ECHO	0x0200		/* Ethernet Echo packet		*/
+N#define ETH_P_PUP	0x0400		/* Xerox PUP packet		*/
+N#define ETH_P_IP	0x0800		/* Internet Protocol packet	*/
+N#define ETH_P_X25	0x0805		/* CCITT X.25			*/
+N#define ETH_P_ARP	0x0806		/* Address Resolution packet	*/
+N#define	ETH_P_BPQ	0x08FF		/* G8BPQ AX.25 Ethernet Packet	[ NOT AN OFFICIALLY REGISTERED ID ] */
+N#define ETH_P_DEC       0x6000          /* DEC Assigned proto           */
+N#define ETH_P_DNA_DL    0x6001          /* DEC DNA Dump/Load            */
+N#define ETH_P_DNA_RC    0x6002          /* DEC DNA Remote Console       */
+N#define ETH_P_DNA_RT    0x6003          /* DEC DNA Routing              */
+N#define ETH_P_LAT       0x6004          /* DEC LAT                      */
+N#define ETH_P_DIAG      0x6005          /* DEC Diagnostics              */
+N#define ETH_P_CUST      0x6006          /* DEC Customer use             */
+N#define ETH_P_SCA       0x6007          /* DEC Systems Comms Arch       */
+N#define ETH_P_RARP      0x8035		/* Reverse Addr Res packet	*/
+N#define ETH_P_ATALK	0x809B		/* Appletalk DDP		*/
+N#define ETH_P_AARP	0x80F3		/* Appletalk AARP		*/
+N#define ETH_P_IPX	0x8137		/* IPX over DIX			*/
+N#define ETH_P_IPV6	0x86DD		/* IPv6 over bluebook		*/
+N
+N
+N/*
+N *	This is an Ethernet frame header.
+N */
+N 
+N__packed struct ethhdr
+N{
+N	unsigned char	h_dest[ETH_ALEN];	/* destination eth addr	*/
+X	unsigned char	h_dest[6];	 
+N	unsigned char	h_source[ETH_ALEN];	/* source ether addr	*/
+X	unsigned char	h_source[6];	 
+N	unsigned short	h_proto;		/* packet type ID field	*/
+N};
+N
+Nstruct sk_buff;
+N
+Nint eth_init(void);
+Nint eth_lnk_stat(void);
+Nint eth_send(struct sk_buff *skb, unsigned char *dest_addr, unsigned short proto);
+Nint eth_rcv(struct sk_buff *skb);
+Nint eth_get_addr(unsigned char *addr);
+Nvoid eth_skb_reserve(struct sk_buff *skb);
+N
+N
+N#endif /* __ETH_H */
+L 5 ".\INC\tftp\skbuff.h" 2
+N
+Nstruct sk_buff {
+N
+N	unsigned char pad[2];
+N	unsigned char buf[ETH_FRAME_LEN];
+X	unsigned char buf[1514];
+N	unsigned int truesize;			/* Buffer size 					*/
+N
+N	unsigned char *data;			/* Data head pointer				*/
+N	unsigned int len;			/* Length of actual data			*/
+N};
+N
+Nint skb_init(void);
+Nstruct sk_buff *alloc_skb(unsigned int size);
+Nvoid free_skb(struct sk_buff *skb);
+Nunsigned char *skb_put(struct sk_buff *skb, unsigned int len);
+Nunsigned char *skb_push(struct sk_buff *skb, unsigned int len);
+Nunsigned char *skb_pull(struct sk_buff *skb, unsigned int len);
+Nvoid skb_reserve(struct sk_buff *skb, unsigned int len);
+N
+N#endif	/* __SKBUFF_H */
+L 3 "Source\tftp\eth.c" 2
+N#include "eth.h"
+N#include "mac.h"
+L 1 ".\INC\tftp\mac.h" 1
+N#ifndef __MAC_H
+N#define __MAC_H
+N
+Nint DM9000DBG_Init(void);
+Nint dm9000_send(unsigned char *data, unsigned int len);	   
+Nint DM9000DBG_GetFrame(unsigned char *data, unsigned int *len);	  
+Nint board_eth_get_addr(unsigned char *addr);
+N
+N#endif /* __MAC_H */
+L 5 "Source\tftp\eth.c" 2
+N#include "utils.h"
+L 1 ".\INC\utils.h" 1
+N#ifndef	__UTILS_H
+N#define	__UTILS_H
+N
+Nvoid memcpy(void *s1, const void *s2, int n);
+Nvoid memset(void *s, const char ch, int n);
+Nunsigned short ntohs(unsigned short s);
+Nunsigned long ntohl(unsigned long l);
+Nunsigned short htons(unsigned short s);
+Nunsigned long htonl(unsigned long l);
+N//unsigned long strtoul(char *s);
+Nvoid ultostr(char *s, unsigned long data);
+Nunsigned long strtobcd(char *s);
+Nunsigned long strtodec(char *str, int cnt);
+Nint strlen(const char *s);
+Nint strncmp(const char *s1, const char *s2, int maxlen);
+N
+Nint getyorn(void);
+Nvoid printf(char *f, ...);
+Nvoid sprintf(char *mem, char *fmt, ...);
+N
+Nint GetParameter(char *str, int cnt);
+N
+N#endif
+L 6 "Source\tftp\eth.c" 2
+N
+Nint eth_init(void) 
+N{
+N	return DM9000DBG_Init();
+N}
+N
+N
+Nint eth_send(struct sk_buff *skb, unsigned char *dest_addr, unsigned short proto)
+N{
+N	struct ethhdr *eth_hdr;
+N	unsigned char local_eth_addr[ETH_ALEN];
+X	unsigned char local_eth_addr[6];
+N	eth_get_addr(local_eth_addr);
+N
+N	eth_hdr = (struct ethhdr *)skb_push(skb, ETH_HLEN);
+X	eth_hdr = (struct ethhdr *)skb_push(skb, 14);
+N
+N	memcpy((unsigned char *)eth_hdr->h_dest, dest_addr, ETH_ALEN);
+X	memcpy((unsigned char *)eth_hdr->h_dest, dest_addr, 6);
+N	memcpy((unsigned char *)eth_hdr->h_source, local_eth_addr, ETH_ALEN);
+X	memcpy((unsigned char *)eth_hdr->h_source, local_eth_addr, 6);
+N	eth_hdr->h_proto = htons(proto);
+N	return dm9000_send(skb->data, skb->len);
+N}
+N
+Nint eth_rcv(struct sk_buff *skb)
+N{
+N	return DM9000DBG_GetFrame(skb->data, &skb->len);
+N}
+N
+Nint eth_get_addr(unsigned char *addr)
+N{
+N	return board_eth_get_addr(addr);
+N}
+N
+Nvoid eth_skb_reserve(struct sk_buff *skb)
+N{
+N	skb_reserve(skb, ETH_HLEN);
+X	skb_reserve(skb, 14);
+N}
+N
+N//#endif

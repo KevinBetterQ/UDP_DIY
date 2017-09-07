@@ -1,0 +1,14 @@
+.\SDRAM\tftp.o: Source\tftp\tftp.c
+.\SDRAM\tftp.o: .\INC\tftp\skbuff.h
+.\SDRAM\tftp.o: .\INC\tftp\eth.h
+.\SDRAM\tftp.o: .\INC\tftp\ip.h
+.\SDRAM\tftp.o: .\INC\tftp\udp.h
+.\SDRAM\tftp.o: .\INC\tftp\tftp.h
+.\SDRAM\tftp.o: .\INC\tftp\tftpput.h
+.\SDRAM\tftp.o: .\INC\utils.h
+.\SDRAM\tftp.o: ..\Common\Inc\2410lib.h
+.\SDRAM\tftp.o: ..\Common\Inc\def.h
+.\SDRAM\tftp.o: ..\Common\Inc\memcfg.h
+.\SDRAM\tftp.o: ..\Common\Inc\option.h
+.\SDRAM\tftp.o: ..\Common\Inc\register.h
+.\SDRAM\tftp.o: ..\Common\Inc\2410addr.h

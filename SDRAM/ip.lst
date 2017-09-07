@@ -1,0 +1,423 @@
+L 1 "Source\tftp\ip.c"
+N
+N#include "skbuff.h"
+L 1 ".\INC\tftp\skbuff.h" 1
+N#ifndef __SKBUFF_H
+N#define __SKBUFF_H
+N
+N#include "eth.h"
+L 1 ".\INC\tftp\eth.h" 1
+N#ifndef __ETH_H
+N#define __ETH_H
+N
+N/*
+N *	IEEE 802.3 Ethernet magic constants.  The frame sizes omit the preamble
+N *	and FCS/CRC (frame check sequence). 
+N */
+N
+N#define ETH_ALEN	6		/* Octets in one ethernet addr	 */
+N#define ETH_HLEN	14		/* Total octets in header.	 */
+N#define ETH_ZLEN	60		/* Min. octets in frame sans FCS */
+N#define ETH_DATA_LEN	1500		/* Max. octets in payload	 */
+N#define ETH_FRAME_LEN	1514		/* Max. octets in frame sans FCS */
+N
+N/*
+N *	These are the defined Ethernet Protocol ID's.
+N */
+N
+N#define ETH_P_LOOP	0x0060		/* Ethernet Loopback packet	*/
+N#define ETH_P_ECHO	0x0200		/* Ethernet Echo packet		*/
+N#define ETH_P_PUP	0x0400		/* Xerox PUP packet		*/
+N#define ETH_P_IP	0x0800		/* Internet Protocol packet	*/
+N#define ETH_P_X25	0x0805		/* CCITT X.25			*/
+N#define ETH_P_ARP	0x0806		/* Address Resolution packet	*/
+N#define	ETH_P_BPQ	0x08FF		/* G8BPQ AX.25 Ethernet Packet	[ NOT AN OFFICIALLY REGISTERED ID ] */
+N#define ETH_P_DEC       0x6000          /* DEC Assigned proto           */
+N#define ETH_P_DNA_DL    0x6001          /* DEC DNA Dump/Load            */
+N#define ETH_P_DNA_RC    0x6002          /* DEC DNA Remote Console       */
+N#define ETH_P_DNA_RT    0x6003          /* DEC DNA Routing              */
+N#define ETH_P_LAT       0x6004          /* DEC LAT                      */
+N#define ETH_P_DIAG      0x6005          /* DEC Diagnostics              */
+N#define ETH_P_CUST      0x6006          /* DEC Customer use             */
+N#define ETH_P_SCA       0x6007          /* DEC Systems Comms Arch       */
+N#define ETH_P_RARP      0x8035		/* Reverse Addr Res packet	*/
+N#define ETH_P_ATALK	0x809B		/* Appletalk DDP		*/
+N#define ETH_P_AARP	0x80F3		/* Appletalk AARP		*/
+N#define ETH_P_IPX	0x8137		/* IPX over DIX			*/
+N#define ETH_P_IPV6	0x86DD		/* IPv6 over bluebook		*/
+N
+N
+N/*
+N *	This is an Ethernet frame header.
+N */
+N 
+N__packed struct ethhdr
+N{
+N	unsigned char	h_dest[ETH_ALEN];	/* destination eth addr	*/
+X	unsigned char	h_dest[6];	 
+N	unsigned char	h_source[ETH_ALEN];	/* source ether addr	*/
+X	unsigned char	h_source[6];	 
+N	unsigned short	h_proto;		/* packet type ID field	*/
+N};
+N
+Nstruct sk_buff;
+N
+Nint eth_init(void);
+Nint eth_lnk_stat(void);
+Nint eth_send(struct sk_buff *skb, unsigned char *dest_addr, unsigned short proto);
+Nint eth_rcv(struct sk_buff *skb);
+Nint eth_get_addr(unsigned char *addr);
+Nvoid eth_skb_reserve(struct sk_buff *skb);
+N
+N
+N#endif /* __ETH_H */
+L 5 ".\INC\tftp\skbuff.h" 2
+N
+Nstruct sk_buff {
+N
+N	unsigned char pad[2];
+N	unsigned char buf[ETH_FRAME_LEN];
+X	unsigned char buf[1514];
+N	unsigned int truesize;			/* Buffer size 					*/
+N
+N	unsigned char *data;			/* Data head pointer				*/
+N	unsigned int len;			/* Length of actual data			*/
+N};
+N
+Nint skb_init(void);
+Nstruct sk_buff *alloc_skb(unsigned int size);
+Nvoid free_skb(struct sk_buff *skb);
+Nunsigned char *skb_put(struct sk_buff *skb, unsigned int len);
+Nunsigned char *skb_push(struct sk_buff *skb, unsigned int len);
+Nunsigned char *skb_pull(struct sk_buff *skb, unsigned int len);
+Nvoid skb_reserve(struct sk_buff *skb, unsigned int len);
+N
+N#endif	/* __SKBUFF_H */
+L 3 "Source\tftp\ip.c" 2
+N#include "eth.h"
+N#include "ip.h"
+L 1 ".\INC\tftp\ip.h" 1
+N#ifndef __IP_H
+N#define __IP_H
+N
+N#define UDP		0x11
+N#define	ICMP	0x01
+N
+N
+N/*
+N *	This structure defines an ip header.
+N */
+N
+N__packed struct iphdr {
+N
+N	unsigned ihl:4,
+N			 version:4;
+N	unsigned char	tos;
+N	unsigned short	tot_len;
+N	unsigned short	id;
+N	unsigned short	frag_off;
+N	unsigned char	ttl;
+N	unsigned char	protocol;
+N	unsigned short	check;
+N	unsigned long	saddr;
+N	unsigned long	daddr;
+N	/*The options start here. */
+N};//__attribute__ ((packed));
+N
+Nint ip_init(unsigned long ip);
+Nint ip_rcv_packet(struct sk_buff *skb);
+Nint ip_send(struct sk_buff *skb, unsigned long ip, unsigned char proto);
+Nvoid ip_skb_reserve(struct sk_buff *skb);
+Nunsigned long ip_get_source_ip(struct sk_buff *skb);
+N
+N#endif /* __IP_H */
+L 5 "Source\tftp\ip.c" 2
+N#include "arp.h"
+L 1 ".\INC\tftp\arp.h" 1
+N#ifndef __ARP_H
+N#define __ARP_H
+N
+N#include "eth.h"
+N
+N/* ARP protocol HARDWARE identifiers. */
+N#define ARPHRD_NETROM	0		/* from KA9Q: NET/ROM pseudo	*/
+N#define ARPHRD_ETHER 	1		/* Ethernet 10Mbps		*/
+N#define	ARPHRD_EETHER	2		/* Experimental Ethernet	*/
+N#define	ARPHRD_AX25	3		/* AX.25 Level 2		*/
+N#define	ARPHRD_PRONET	4		/* PROnet token ring		*/
+N#define	ARPHRD_CHAOS	5		/* Chaosnet			*/
+N#define	ARPHRD_IEEE802	6		/* IEEE 802.2 Ethernet/TR/TB	*/
+N#define	ARPHRD_ARCNET	7		/* ARCnet			*/
+N#define	ARPHRD_APPLETLK	8		/* APPLEtalk			*/
+N#define ARPHRD_DLCI	15		/* Frame Relay DLCI		*/
+N#define ARPHRD_ATM	19		/* ATM 				*/
+N#define ARPHRD_METRICOM	23		/* Metricom STRIP (new IANA id)	*/
+N#define	ARPHRD_IEEE1394	24		/* IEEE 1394 IPv4 - RFC 2734	*/
+N#define ARPHRD_EUI64	27		/* EUI-64                       */
+N
+N/* Dummy types for non ARP hardware */
+N#define ARPHRD_SLIP	256
+N#define ARPHRD_CSLIP	257
+N#define ARPHRD_SLIP6	258
+N#define ARPHRD_CSLIP6	259
+N#define ARPHRD_RSRVD	260		/* Notional KISS type 		*/
+N#define ARPHRD_ADAPT	264
+N#define ARPHRD_ROSE	270
+N#define ARPHRD_X25	271		/* CCITT X.25			*/
+N#define ARPHRD_HWX25	272		/* Boards with X.25 in firmware	*/
+N#define ARPHRD_PPP	512
+N#define ARPHRD_CISCO	513		/* Cisco HDLC	 		*/
+N#define ARPHRD_HDLC	ARPHRD_CISCO
+N#define ARPHRD_LAPB	516		/* LAPB				*/
+N#define ARPHRD_DDCMP    517		/* Digital's DDCMP protocol     */
+N#define ARPHRD_RAWHDLC	518		/* Raw HDLC			*/
+N
+N#define ARPHRD_TUNNEL	768		/* IPIP tunnel			*/
+N#define ARPHRD_TUNNEL6	769		/* IPIP6 tunnel			*/
+N#define ARPHRD_FRAD	770             /* Frame Relay Access Device    */
+N#define ARPHRD_SKIP	771		/* SKIP vif			*/
+N#define ARPHRD_LOOPBACK	772		/* Loopback device		*/
+N#define ARPHRD_LOCALTLK 773		/* Localtalk device		*/
+N#define ARPHRD_FDDI	774		/* Fiber Distributed Data Interface */
+N#define ARPHRD_BIF      775             /* AP1000 BIF                   */
+N#define ARPHRD_SIT	776		/* sit0 device - IPv6-in-IPv4	*/
+N#define ARPHRD_IPDDP	777		/* IP over DDP tunneller	*/
+N#define ARPHRD_IPGRE	778		/* GRE over IP			*/
+N#define ARPHRD_PIMREG	779		/* PIMSM register interface	*/
+N#define ARPHRD_HIPPI	780		/* High Performance Parallel Interface */
+N#define ARPHRD_ASH	781		/* Nexus 64Mbps Ash		*/
+N#define ARPHRD_ECONET	782		/* Acorn Econet			*/
+N#define ARPHRD_IRDA 	783		/* Linux-IrDA			*/
+N/* ARP works differently on different FC media .. so  */
+N#define ARPHRD_FCPP	784		/* Point to point fibrechannel	*/
+N#define ARPHRD_FCAL	785		/* Fibrechannel arbitrated loop */
+N#define ARPHRD_FCPL	786		/* Fibrechannel public loop	*/
+N#define ARPHRD_FCFABRIC	787		/* Fibrechannel fabric		*/
+N	/* 787->799 reserved for fibrechannel media types */
+N#define ARPHRD_IEEE802_TR 800		/* Magic type ident for TR	*/
+N#define ARPHRD_IEEE80211 801		/* IEEE 802.11			*/
+N
+N#define ARPHRD_VOID	  0xFFFF	/* Void type, nothing is known */
+N
+N/* ARP protocol opcodes. */
+N#define	ARPOP_REQUEST	1		/* ARP request			*/
+N#define	ARPOP_REPLY	2		/* ARP reply			*/
+N#define	ARPOP_RREQUEST	3		/* RARP request			*/
+N#define	ARPOP_RREPLY	4		/* RARP reply			*/
+N#define	ARPOP_InREQUEST	8		/* InARP request		*/
+N#define	ARPOP_InREPLY	9		/* InARP reply			*/
+N#define	ARPOP_NAK	10		/* (ATM)ARP NAK			*/
+N
+N/*
+N *	This structure defines an ethernet arp header.
+N */
+N
+N__packed struct arphdr
+N{
+N	unsigned short	ar_hrd;		/* format of hardware address	*/
+N	unsigned short	ar_pro;		/* format of protocol address	*/
+N	unsigned char	ar_hln;		/* length of hardware address	*/
+N	unsigned char	ar_pln;		/* length of protocol address	*/
+N	unsigned short	ar_op;		/* ARP opcode (command)		*/
+N
+N	 /*
+N	  *	 Ethernet looks like this : This bit is variable sized however...
+N	  */
+N	unsigned char	ar_sha[ETH_ALEN];	/* sender hardware address	*/
+X	unsigned char	ar_sha[6];	 
+N	unsigned long	ar_sip;			/* sender IP address		*/
+N	unsigned char	ar_tha[ETH_ALEN];	/* target hardware address	*/
+X	unsigned char	ar_tha[6];	 
+N	unsigned long	ar_tip;			/* target IP address		*/
+N};
+N
+Nint arp_init(void);
+Nint arp_add_entry(unsigned char *ha, unsigned long ip);
+Nint arp_get_eth_addr(unsigned long ip, unsigned char *ha);
+Nint arp_rcv_packet(struct sk_buff *skb);
+N
+N#endif /* __ARP_H */
+L 6 "Source\tftp\ip.c" 2
+N#include "icmp.h"
+L 1 ".\INC\tftp\icmp.h" 1
+N#ifndef __ICMP_H
+N#define	__ICMP_H
+N
+N#include "skbuff.h"
+N#include "ip.h"
+N
+N__packed struct icmphdr
+N{
+N	unsigned char type;
+N	unsigned char code;
+N	unsigned short check;
+N};
+N
+Nint icmp_rcv_packet(struct sk_buff *skb);
+N
+N#endif
+L 7 "Source\tftp\ip.c" 2
+N#include "udp.h"
+L 1 ".\INC\tftp\udp.h" 1
+N#ifndef __UDP_H
+N#define __UDP_H
+N
+N#define TFTP 0x45
+N
+N/*
+N *	This structure defines an udp header.
+N */
+N
+N__packed struct udphdr {
+N	unsigned short	source;
+N	unsigned short	dest;
+N	unsigned short	len;
+N	unsigned short	check;
+N};//__attribute__ ((packed));
+N
+Nint udp_init(void);
+Nint udp_rcv_packet(struct sk_buff *skb);
+Nint udp_send(struct sk_buff *skb, unsigned long ip,
+N	unsigned short source, unsigned short dest);
+Nvoid udp_skb_reserve(struct sk_buff *skb);
+Nunsigned short udp_get_source_port(struct sk_buff *skb);
+N
+N#endif /* __UDP_H */
+L 8 "Source\tftp\ip.c" 2
+N#include "utils.h"
+L 1 ".\INC\utils.h" 1
+N#ifndef	__UTILS_H
+N#define	__UTILS_H
+N
+Nvoid memcpy(void *s1, const void *s2, int n);
+Nvoid memset(void *s, const char ch, int n);
+Nunsigned short ntohs(unsigned short s);
+Nunsigned long ntohl(unsigned long l);
+Nunsigned short htons(unsigned short s);
+Nunsigned long htonl(unsigned long l);
+N//unsigned long strtoul(char *s);
+Nvoid ultostr(char *s, unsigned long data);
+Nunsigned long strtobcd(char *s);
+Nunsigned long strtodec(char *str, int cnt);
+Nint strlen(const char *s);
+Nint strncmp(const char *s1, const char *s2, int maxlen);
+N
+Nint getyorn(void);
+Nvoid printf(char *f, ...);
+Nvoid sprintf(char *mem, char *fmt, ...);
+N
+Nint GetParameter(char *str, int cnt);
+N
+N#endif
+L 9 "Source\tftp\ip.c" 2
+N
+Nstatic unsigned long local_ip = 0;
+N
+Nunsigned short ip_fast_csum(unsigned char * iph, unsigned int ihl)
+N{
+N	unsigned int sum, tmp1;
+N	
+N	// ip_fast_csum
+N	__asm {						
+N	ldr	sum, [iph], #4		
+N	ldr	tmp1, [iph], #4
+N	sub	ihl, ihl, #5
+N	adds	sum, sum, tmp1
+N	ldr	tmp1, [iph], #4
+N	adcs	sum, sum, tmp1
+N	ldr	tmp1, [iph], #4
+N	adcs	sum, sum, tmp1
+Nl:	ldr	tmp1, [iph], #4
+N	adcs	sum, sum, tmp1
+N	tst	ihl, #15
+N	subne	ihl, ihl, #1
+N	bne	l
+N	adc	sum, sum, #0
+N	adds	sum, sum, sum, lsl #16
+N	addcs	sum, sum, #0x10000
+N	mvn	sum, sum
+N	mov	sum, sum, lsr #16	
+N	};
+N	
+N	return sum;
+N} 
+N
+Nint ip_init(unsigned long ip)
+N{
+N	local_ip = ip;
+N	return 0;
+N}
+N
+Nint ip_rcv_packet(struct sk_buff *skb)
+N{
+N	struct iphdr *ip_hdr = (struct iphdr *)(skb->data);
+N
+N	if (ntohl(ip_hdr->daddr) == local_ip)
+N	{
+N		skb->len = ntohs(ip_hdr->tot_len);
+N		skb_pull(skb, sizeof(struct iphdr));
+N
+N		if (ip_hdr->protocol == UDP)
+X		if (ip_hdr->protocol == 0x11)
+N		{	
+N			udp_rcv_packet(skb);
+N		}
+N
+N		if(ip_hdr->protocol == ICMP)
+X		if(ip_hdr->protocol == 0x01)
+N		{
+N			icmp_rcv_packet(skb);
+N		}			
+N	}
+N
+N	return 0;
+N}
+N
+Nint ip_send(struct sk_buff *skb, unsigned long ip, unsigned char proto)
+N{
+N	struct iphdr *ip_hdr;
+N	static unsigned short ip_id = 32;	
+N	unsigned char dest_eth_addr[ETH_ALEN];	
+X	unsigned char dest_eth_addr[6];	
+N
+N	if (arp_get_eth_addr(ip, dest_eth_addr))
+N		return -1;
+N
+N	ip_hdr = (struct iphdr *)skb_push(skb, sizeof(struct iphdr));
+N
+N	ip_hdr->ihl = 5;
+N	ip_hdr->version = 4;
+N	ip_hdr->tos = 0;
+N//	ip_hdr->tot_len = htons(32);
+N		ip_hdr->tot_len = htons(skb->len);	
+N	ip_hdr->id = htons(ip_id++);
+N	ip_hdr->frag_off = 0;
+N	ip_hdr->ttl = 20;
+N	ip_hdr->protocol = proto;
+N	ip_hdr->check = 0;
+N	ip_hdr->saddr = htonl(local_ip);
+N	ip_hdr->daddr = htonl(ip);	
+N	ip_hdr->check = ip_fast_csum((unsigned char *)ip_hdr,ip_hdr->ihl);
+N
+N	eth_send(skb, dest_eth_addr, ETH_P_IP);
+X	eth_send(skb, dest_eth_addr, 0x0800);
+N
+N	return 0;
+N}
+N
+Nvoid ip_skb_reserve(struct sk_buff *skb)
+N{
+N	eth_skb_reserve(skb);
+N	skb_reserve(skb, sizeof(struct iphdr));
+N}
+N
+Nunsigned long ip_get_source_ip(struct sk_buff *skb)
+N{
+N	struct iphdr *ip_hdr;
+N	
+N	ip_hdr = (struct iphdr *)(skb->buf + ETH_HLEN);
+X	ip_hdr = (struct iphdr *)(skb->buf + 14);
+N	return ntohl(ip_hdr->saddr);
+N}
+N
+N
